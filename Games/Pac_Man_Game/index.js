@@ -1,6 +1,8 @@
 const canvas = document.querySelector('canvas'); // Get the canvas element
 const c = canvas.getContext('2d'); // Get the context of the canvas
 
+const score = document.querySelector('#score'); // Get the score element
+
 // Define the size of each cell in the map
 const cellSize = 40;
 
@@ -92,6 +94,7 @@ const keys = {
 }
 
 let lastKey = ''
+let scoreValue = 0
 
 // Create an array to store the boundaries
 const map = [
@@ -380,6 +383,7 @@ function animate() {
         pacman.position.x = pacman.radius;
     }
 
+    // Check for pellet collisions	
     pellets.forEach((pellet, i) => { // Loop through the pellets
         pellet.draw() // Draw the pellet
 
@@ -389,6 +393,8 @@ function animate() {
         ) < pellet.radius + pacman.radius // Check if the distance is less than what it would be if the two circles were colliding
     ) {
             pellets.splice(i, 1) // Remove the pellet from the array when it collides with the pacman
+            scoreValue += 10 // Increase the score by 10
+            score.innerHTML = scoreValue // Update the score element
         }
     })
     boundaries.forEach((boundary) => {
