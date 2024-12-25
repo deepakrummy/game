@@ -15,9 +15,7 @@ class Boundary {
         this.image = image;
     }
     draw() {
-        // c.fillStyle = 'blue';
-        // c.fillRect(this.position.x, this.position.y, this.width, this.height); // Draw the player
-        c.drawImage(this.image, this.position.x, this.position.y)
+        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height); // Draw the boundary
     }
 }
 
@@ -164,17 +162,6 @@ map.forEach((row, i) => {
                     })
                 )
             break
-            case '4':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCorner4.png')
-                    })
-                )
-            break
             case 'b':
                 boundaries.push(
                     new Boundary({
@@ -287,7 +274,7 @@ function animate() {
             if (circleCollidesWithRectangle({
                 circle: {...pacman, velocity: {
                     x: 0, 
-                    y: -1 // Adjusted speed
+                    y: -1.5 // Adjusted speed
                 }},
                 rectangle: boundary
                 })
@@ -295,7 +282,7 @@ function animate() {
                 pacman.velocity.y = 0
                 break
             } else {
-                pacman.velocity.y = -2 // Adjusted speed
+                pacman.velocity.y = -1.5 // Adjusted speed
             }
         }
     } else if (keys.ArrowLeft.pressed && lastKey === 'ArrowLeft') {
@@ -303,7 +290,7 @@ function animate() {
             const boundary = boundaries[i]
             if (circleCollidesWithRectangle({
                 circle: {...pacman, velocity: {
-                    x: -1, // Adjusted speed
+                    x: -1.5, // Adjusted speed
                     y: 0
                 }},
                 rectangle: boundary
@@ -312,7 +299,7 @@ function animate() {
                 pacman.velocity.x = 0
                 break
             } else {
-                pacman.velocity.x = -2 // Adjusted speed
+                pacman.velocity.x = -1.5 // Adjusted speed
             }
         }
     } else if (keys.ArrowDown.pressed && lastKey === 'ArrowDown') {
@@ -321,7 +308,7 @@ function animate() {
             if (circleCollidesWithRectangle({
                 circle: {...pacman, velocity: {
                     x: 0, 
-                    y: 1 // Adjusted speed
+                    y: 1.5 // Adjusted speed
                 }},
                 rectangle: boundary
                 })
@@ -329,7 +316,7 @@ function animate() {
                 pacman.velocity.y = 0
                 break
             } else {
-                pacman.velocity.y = 2 // Adjusted speed
+                pacman.velocity.y = 1.5 // Adjusted speed
             }
         }
     } else if (keys.ArrowRight.pressed && lastKey === 'ArrowRight') {
@@ -337,7 +324,7 @@ function animate() {
             const boundary = boundaries[i]
             if (circleCollidesWithRectangle({
                 circle: {...pacman, velocity: {
-                    x: 1, // Adjusted speed
+                    x: 1.5, // Adjusted speed
                     y: 0
                 }},
                 rectangle: boundary
@@ -346,9 +333,16 @@ function animate() {
                 pacman.velocity.x = 0
                 break
             } else {
-                pacman.velocity.x = 2 // Adjusted speed
+                pacman.velocity.x = 1.5 // Adjusted speed
             }
         }
+    }
+
+    // Check for portal collisions
+    if (pacman.position.x < 0) {
+        pacman.position.x = canvas.width - pacman.radius;
+    } else if (pacman.position.x > canvas.width) {
+        pacman.position.x = pacman.radius;
     }
 
     boundaries.forEach((boundary) => {
