@@ -380,8 +380,16 @@ function animate() {
         pacman.position.x = pacman.radius;
     }
 
-    pellets.forEach(pellet => {
-        pellet.draw()
+    pellets.forEach((pellet, i) => { // Loop through the pellets
+        pellet.draw() // Draw the pellet
+
+        // Check if the pellet collides with the player
+        if (Math.hypot(pellet.position.x - pacman.position.x, // Calculate the x and y distance between the pellet and the pacman
+            pellet.position.y - pacman.position.y
+        ) < pellet.radius + pacman.radius // Check if the distance is less than what it would be if the two circles were colliding
+    ) {
+            pellets.splice(i, 1) // Remove the pellet from the array when it collides with the pacman
+        }
     })
     boundaries.forEach((boundary) => {
         boundary.draw()
