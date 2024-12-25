@@ -35,7 +35,7 @@ class Pacman {
     constructor({position, velocity}) {
         this.position = position;
         this.velocity = velocity;
-        this.radius = cellSize / 2 - 5;
+        this.radius = 15;
     }
     draw() {
         c.fillStyle = 'yellow';
@@ -48,6 +48,30 @@ class Pacman {
         this.draw()
         this.position.x += this.velocity.x
         this.position.y += this.velocity.y
+    }
+}
+
+class Ghost {
+    constructor({position, velocity, color = 'pink'}) {
+        this.position = position;
+        this.velocity = velocity;
+        this.radius = 15;
+        this.color = color;
+        this.startMoving = false;
+    }
+    draw() {
+        c.fillStyle = this.color;
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+        c.fill()
+        c.closePath()
+    }
+    update() {
+        this.draw()
+        if (this.startMoving) {
+            this.position.x += this.velocity.x
+            this.position.y += this.velocity.y
+        }
     }
 }
 
@@ -65,9 +89,11 @@ class Pellet {
     }
 }
 
-let pellets = []
-let boundaries = []
-let pacman = new Pacman({
+const pellets = []
+const boundaries = []
+const ghosts = []
+
+const pacman = new Pacman({
     position: {
         x: Boundary.width + Boundary.width / 2,
         y: Boundary.height + Boundary.height / 2
@@ -122,191 +148,212 @@ function createImage(src) {
 }
 
 function initializeGame() {
-    pellets = []
-    boundaries = []
-    pacman = new Pacman({
-        position: {
-            x: Boundary.width + Boundary.width / 2,
-            y: Boundary.height + Boundary.height / 2
-        },
-        velocity: {
-            x: 0,
-            y: 0
-        }
-    })
+    pellets.length = 0
+    boundaries.length = 0
+    ghosts.length = 0
+    pacman.position = {
+        x: Boundary.width + Boundary.width / 2,
+        y: Boundary.height + Boundary.height / 2
+    }
+    pacman.velocity = {
+        x: 0,
+        y: 0
+    }
     scoreValue = 0
     score.innerHTML = scoreValue
 
-map.forEach((row, i) => {
-    row.forEach((symbol, j) => {
-        switch (symbol) {
-            case '-':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeHorizontal.png')
-                    })
-                )
-            break
-            case '|':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeVertical.png')
-                    })
-                )
-            break
-            case '1':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCorner1.png')
-                    })
-                )
-            break
-            case '2':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCorner2.png')
-                    })
-                )
-            break
-            case '3':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCorner3.png')
-                    })
-                )
-            break
-            case '4':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCorner4.png')
-                    })
-                )
-            break
-            case 'b':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/block.png')
-                    })
-                )
-            break
-            case '<':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/capLeft.png')
-                    })
-                )
-            break
-            case '>':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/capRight.png')
-                    })
-                )
-            break
-            case '^':	
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/capBottom.png')
-                    })
-                )
-            break
-            case 'v':	
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/capTop.png')
-                    })
-                )
-            break
-            case '0':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeConnectorBottom.png')
-                    })
-                )
-            break
-            case 'x':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeConnectorTop.png')
-                    })
-                )
-            break
-            case '+':
-                boundaries.push(
-                    new Boundary({
-                        position: {
-                            x: Boundary.width * j,
-                            y: Boundary.height * i
-                        },
-                        image: createImage('./images/pipeCross.png')
-                    })
-                )
-            break
-            case '.':
-                pellets.push(
-                    new Pellet({
-                        position: {
-                            x: Boundary.width * j + Boundary.width / 2,
-                            y: Boundary.height * i + Boundary.height / 2
-                        }
-                    })
-                )
-            break
-        }
+    map.forEach((row, i) => {
+        row.forEach((symbol, j) => {
+            switch (symbol) {
+                case '-':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeHorizontal.png')
+                        })
+                    )
+                break
+                case '|':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeVertical.png')
+                        })
+                    )
+                break
+                case '1':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeCorner1.png')
+                        })
+                    )
+                break
+                case '2':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeCorner2.png')
+                        })
+                    )
+                break
+                case '3':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeCorner3.png')
+                        })
+                    )
+                break
+                case '4':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeCorner4.png')
+                        })
+                    )
+                break
+                case 'b':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/block.png')
+                        })
+                    )
+                break
+                case '<':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/capLeft.png')
+                        })
+                    )
+                break
+                case '>':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/capRight.png')
+                        })
+                    )
+                break
+                case '^':	
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/capBottom.png')
+                        })
+                    )
+                break
+                case 'v':	
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/capTop.png')
+                        })
+                    )
+                break
+                case '0':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeConnectorBottom.png')
+                        })
+                    )
+                break
+                case 'x':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeConnectorTop.png')
+                        })
+                    )
+                break
+                case '+':
+                    boundaries.push(
+                        new Boundary({
+                            position: {
+                                x: Boundary.width * j,
+                                y: Boundary.height * i
+                            },
+                            image: createImage('./images/pipeCross.png')
+                        })
+                    )
+                break
+                case '.':
+                    pellets.push(
+                        new Pellet({
+                            position: {
+                                x: Boundary.width * j + Boundary.width / 2,
+                                y: Boundary.height * i + Boundary.height / 2
+                            }
+                        })
+                    )
+                break
+            }
+        })
     })
-})
+
+    // Add ghost after initializing the map
+    ghosts.push(
+        new Ghost({
+            position: {
+                x: Boundary.width * 9 + Boundary.width / 2,
+                y: Boundary.height * 6 + Boundary.height / 2
+            },
+            velocity: {
+                x: 0,
+                y: 0
+            }
+        })
+    )
+
+    // Start moving the ghost after a delay
+    setTimeout(() => { // Set a timeout to delay the ghost movement
+        ghosts.forEach(ghost => { // Loop through the ghosts
+            ghost.velocity = { x: 1, y: 0 } // Set the velocity of the ghost
+            ghost.startMoving = true // Set the startMoving property to true
+        })
+    }, 5000) // 5 seconds delay
 }
 
 function circleCollidesWithRectangle({circle, rectangle}) {
@@ -436,6 +483,36 @@ function animate() {
     }
 })
 pacman.update()
+
+ghosts.forEach((ghost) => {
+    ghost.update()
+
+    // Check for portal collisions for ghosts
+    if (ghost.position.x < 0) {
+        ghost.position.x = canvas.width - ghost.radius;
+    } else if (ghost.position.x > canvas.width) {
+        ghost.position.x = ghost.radius;
+    }
+
+    let collision = false
+    boundaries.forEach(boundary => {
+        if (circleCollidesWithRectangle({
+            circle: {...ghost, velocity: {
+                x: ghost.velocity.x,
+                y: ghost.velocity.y
+            }},
+            rectangle: boundary
+            })
+        ) {
+            collision = true
+        }
+    })
+
+    if (collision) {
+        ghost.velocity.x = 0
+        ghost.velocity.y = 0
+    }
+})
 }
 
 initializeGame();
