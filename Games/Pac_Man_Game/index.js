@@ -58,19 +58,20 @@ class Ghost {
         this.radius = 15;
         this.color = color;
         this.startMoving = false;
+        this.originalSpeed = Math.hypot(velocity.x, velocity.y); // Bewaar de oorspronkelijke snelheid
     }
     draw() {
         c.fillStyle = this.color;
-        c.beginPath()
-        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
-        c.fill()
-        c.closePath()
+        c.beginPath();
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2);
+        c.fill();
+        c.closePath();
     }
     update() {
-        this.draw()
+        this.draw();
         if (this.startMoving) {
-            this.position.x += this.velocity.x
-            this.position.y += this.velocity.y
+            this.position.x += this.velocity.x;
+            this.position.y += this.velocity.y;
         }
     }
 }
@@ -341,19 +342,54 @@ function initializeGame() {
                 y: Boundary.height * 6 + Boundary.height / 2
             },
             velocity: {
-                x: 0,
+                x: 1.2, // ghost is sligthly slower than pacman
                 y: 0
-            }
+            },
+            color: 'red'
+        },
+        {startMoving: true
+        })
+    )
+    ghosts.push(
+        new Ghost({
+            position: {
+                x: Boundary.width * 8 + Boundary.width / 2,
+                y: Boundary.height * 7 + Boundary.height / 2
+            },
+            velocity: {
+                x: 1.5, // ghost has the same speed as pacman
+                y: 0
+            },
+            color: 'green'
+        })
+    )
+    ghosts.push(
+        new Ghost({
+            position: {
+                x: Boundary.width * 10 + Boundary.width / 2,
+                y: Boundary.height * 7 + Boundary.height / 2
+            },
+            velocity: {
+                x: 1.7, // ghost is slightly faster than pacman
+                y: 0
+            },
+            color: 'pink'
         })
     )
 
-    // Start moving the ghost after a delay
-    setTimeout(() => { // Set a timeout to delay the ghost movement
-        ghosts.forEach(ghost => { // Loop through the ghosts
-            ghost.velocity = { x: 1, y: 0 } // Set the velocity of the ghost
-            ghost.startMoving = true // Set the startMoving property to true
-        })
-    }, 5000) // 5 seconds delay
+
+    // each ghost starts moving after a delay
+    setTimeout(() => {
+        ghosts[0].startMoving = true; // First ghost starts after 5 seconds
+    }, 5000);
+
+    setTimeout(() => {
+        ghosts[1].startMoving = true; // Second ghost starts after 15 seconds
+    }, 15000);
+
+    setTimeout(() => {
+        ghosts[2].startMoving = true; // Third ghost starts after 40 seconds
+    }, 40000);
 }
 
 function circleCollidesWithRectangle({circle, rectangle}) {
@@ -485,7 +521,7 @@ function animate() {
 pacman.update()
 
 ghosts.forEach((ghost) => {
-    ghost.update()
+    ghost.update();
 
     // Check for portal collisions for ghosts
     if (ghost.position.x < 0) {
@@ -494,7 +530,7 @@ ghosts.forEach((ghost) => {
         ghost.position.x = ghost.radius;
     }
 
-    let collision = false
+    let collision = false;
     boundaries.forEach(boundary => {
         if (circleCollidesWithRectangle({
             circle: {...ghost, velocity: {
@@ -503,21 +539,21 @@ ghosts.forEach((ghost) => {
             }},
             rectangle: boundary
         })) {
-            collision = true
+            collision = true;
         }
-    })
+    });
 
     if (collision) {
-        // Stop the ghost and set a random new direction, but avoid dead ends and corners
+        // Stop the ghost and set a random new direction, but use original speed
         ghost.velocity.x = 0;
         ghost.velocity.y = 0;
 
         // Possible directions to move
         const directions = [
-            { direction: 'right', x: 1.5, y: 0 },
-            { direction: 'left', x: -1.5, y: 0 },
-            { direction: 'up', x: 0, y: -1.5 },
-            { direction: 'down', x: 0, y: 1.5 }
+            { direction: 'right', x: ghost.originalSpeed, y: 0 },
+            { direction: 'left', x: -ghost.originalSpeed, y: 0 },
+            { direction: 'up', x: 0, y: -ghost.originalSpeed },
+            { direction: 'down', x: 0, y: ghost.originalSpeed }
         ];
 
         // Function to check if a move is valid (not blocked by a boundary)
