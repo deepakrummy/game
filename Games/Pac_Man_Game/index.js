@@ -65,9 +65,9 @@ class Pellet {
     }
 }
 
-const pellets = []
-const boundaries = []
-const pacman = new Pacman({
+let pellets = []
+let boundaries = []
+let pacman = new Pacman({
     position: {
         x: Boundary.width + Boundary.width / 2,
         y: Boundary.height + Boundary.height / 2
@@ -120,6 +120,22 @@ function createImage(src) {
     image.src = src
     return image
 }
+
+function initializeGame() {
+    pellets = []
+    boundaries = []
+    pacman = new Pacman({
+        position: {
+            x: Boundary.width + Boundary.width / 2,
+            y: Boundary.height + Boundary.height / 2
+        },
+        velocity: {
+            x: 0,
+            y: 0
+        }
+    })
+    scoreValue = 0
+    score.innerHTML = scoreValue
 
 map.forEach((row, i) => {
     row.forEach((symbol, j) => {
@@ -291,6 +307,7 @@ map.forEach((row, i) => {
         }
     })
 })
+}
 
 function circleCollidesWithRectangle({circle, rectangle}) {
     const padding = Boundary.width / 2 - circle.radius - 1
@@ -395,6 +412,14 @@ function animate() {
             pellets.splice(i, 1) // Remove the pellet from the array when it collides with the pacman
             scoreValue += 10 // Increase the score by 10
             score.innerHTML = scoreValue // Update the score element
+
+            // Check if all pellets are collected
+            if (pellets.length === 0) {
+                setTimeout(() => {
+                    alert('Congratulations! You have won!');
+                    initializeGame(); // Restart the game
+                }, 100);
+            }
         }
     })
     boundaries.forEach((boundary) => {
@@ -413,6 +438,7 @@ function animate() {
 pacman.update()
 }
 
+initializeGame();
 animate()
 
 window.addEventListener('keydown', ({key}) => {
