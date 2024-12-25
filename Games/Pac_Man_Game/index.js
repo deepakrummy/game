@@ -123,20 +123,10 @@ const pacman = new Pacman({
     }
 })
 
-const keys = {
-    ArrowUp: {
-        pressed: false
-    },
-    ArrowDown: {
-        pressed: false
-    },
-    ArrowLeft: {
-        pressed: false
-    },
-    ArrowRight: {
-        pressed: false
-    }
-}
+const keys = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].reduce((acc, key) => {
+    acc[key] = { pressed: false };
+    return acc;
+}, {});
 
 let lastKey = ''
 let scoreValue = 0
