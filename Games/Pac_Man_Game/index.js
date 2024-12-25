@@ -36,18 +36,36 @@ class Pacman {
         this.position = position;
         this.velocity = velocity;
         this.radius = 15;
+        this.radians = 0.75; // Start with the mouth closed
+        this.openRate = 0.05; // How fast the mouth opens and closes
+        this.rotation = 0; // Rotation of Pacman starts at 0
     }
     draw() {
-        c.fillStyle = 'yellow';
-        c.beginPath()
-        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
-        c.fill()
-        c.closePath()
+        c.save(); // Save the current state of the canvas
+        c.translate(this.position.x, this.position.y); // Translate the canvas to the position of Pacman so we can rotate around him
+        c.rotate(this.rotation); // Rotation of Pacman so the mouth opens in the right direction
+        c.translate(-this.position.x, -this.position.y); // Translate the canvas back to the original position
+        c.fillStyle = 'yellow'; // Set the fill color to yellow
+        c.beginPath(); // Start a new path
+        c.arc(this.position.x, this.position.y, this.radius, this.radians, Math.PI * 2 - this.radians); // Draw the mouth of Pacman with the current radians. Math.PI * 2 is a full circle
+        c.lineTo(this.position.x, this.position.y); // Draw a line to the center of Pacman to close the mouth
+        c.fill(); // Fill the path with the current fill color
+        c.closePath(); // Close the path so we can start a new one
+        c.restore(); // Restore the canvas to the previous state
     }
     update() {
-        this.draw()
-        this.position.x += this.velocity.x
-        this.position.y += this.velocity.y
+        this.draw(); // Draw Pacman
+        this.position.x += this.velocity.x; // Move Pacman on the x-axis
+        this.position.y += this.velocity.y; // Move Pacman on the y-axis
+
+        // Calculate the rotation of Pacman based on his velocity
+        if (this.velocity.x !== 0 || this.velocity.y !== 0) { // Check if Pacman is moving
+            this.rotation = Math.atan2(this.velocity.y, this.velocity.x); // Rotate Pacman based on his velocity
+        }
+
+        // Open and close the mouth of Pacman
+        if (this.radians < 0 || this.radians > 0.75) this.openRate = -this.openRate; // Change the open rate if the mouth is fully open or closed
+        this.radians += this.openRate; // Change the radians of Pacman
     }
 }
 
