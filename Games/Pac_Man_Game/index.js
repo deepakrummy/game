@@ -1,17 +1,27 @@
 const canvas = document.querySelector('canvas'); // Get the canvas element
 const c = canvas.getContext('2d'); // Get the context of the canvas
 
-canvas.width = innerWidth; // Set the width of the canvas to the width of the window
-canvas.height = innerHeight; // Set the height of the canvas to the height of the window
+// Define the size of each cell in the map
+const cellSize = 40;
+
+// Calculate the canvas size based on the map dimensions
+const mapWidth = 19; // Number of columns in the map
+const mapHeight = 15; // Number of rows in the map
+
+canvas.width = mapWidth * cellSize; // Set the width of the canvas based on the map width
+canvas.height = mapHeight * cellSize; // Set the height of the canvas based on the map height
+
+// Prevent scrollbars
+document.body.style.overflow = 'hidden';
 
 // Create a class for the player
 class Boundary {
-    static width = 40;
-    static height = 40;
+    static width = cellSize;
+    static height = cellSize;
     constructor({position, image}) { // The constructor takes an object with a position property so we can destructure it
         this.position = position; // Set the position of the player
-        this.width = 40; 
-        this.height = 40;
+        this.width = cellSize; 
+        this.height = cellSize;
         this.image = image;
     }
     draw() {
@@ -23,7 +33,7 @@ class Pacman {
     constructor({position, velocity}) {
         this.position = position;
         this.velocity = velocity;
-        this.radius = 15;
+        this.radius = cellSize / 2 - 5;
     }
     draw() {
         c.fillStyle = 'yellow';
@@ -39,6 +49,21 @@ class Pacman {
     }
 }
 
+class Pellet {
+    constructor({position}) {
+        this.position = position;
+        this.radius = 3;
+    }
+    draw() {
+        c.fillStyle = 'white';
+        c.beginPath()
+        c.arc(this.position.x, this.position.y, this.radius, 0, Math.PI * 2)
+        c.fill()
+        c.closePath()
+    }
+}
+
+const pellets = []
 const boundaries = []
 const pacman = new Pacman({
     position: {
@@ -71,19 +96,19 @@ let lastKey = ''
 // Create an array to store the boundaries
 const map = [
     ['1','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','2'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','^',' ',' ',' ',' ',' ',' ',' ',' ','|'],
-    ['|',' ','b',' ','<','>',' ','b',' ',' ',' ','b',' ','<','>',' ','b',' ','|'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','v',' ',' ',' ',' ',' ',' ',' ',' ','|'],
-    ['|',' ','b',' ','<','-','>',' ','<','+','>',' ','<','-','>',' ','b',' ','|'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','^',' ',' ',' ',' ',' ',' ',' ',' ','|'],
-    ['4','-','-','>',' ','<','-','>',' ',' ',' ','<','-','>',' ','<','-','-','3'],
-    [' ',' ',' ',' ',' ',' ',' ',' ',' ','b',' ',' ',' ',' ',' ',' ',' ',' ',' '],
-    ['1','-','-','>',' ','<','-','>',' ',' ',' ','<','-','>',' ','<','-','-','2'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','v',' ',' ',' ',' ',' ',' ',' ',' ','|'],
-    ['|',' ','b',' ','<','-','>',' ','<','+','>',' ','<','-','>',' ','b',' ','|'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','^',' ',' ',' ',' ',' ',' ',' ',' ','|'],
-    ['|',' ','b',' ','<','>',' ','b',' ',' ',' ','b',' ','<','>',' ','b',' ','|'],
-    ['|',' ',' ',' ',' ',' ',' ',' ',' ','v',' ',' ',' ',' ',' ',' ',' ',' ','|'],
+    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
+    ['|','.','b','.','<','>','.','b','.','.','.','b','.','<','>','.','b','.','|'],
+    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
+    ['|','.','b','.','<','-','>','.','<','+','>','.','<','-','>','.','b','.','|'],
+    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
+    ['4','-','-','>','.','<','-','>','.','.','.','<','-','>','.','<','-','-','3'],
+    [' ',' ',' ',' ','.',' ',' ',' ',' ','b','.','.','.','.','.',' ',' ',' ',' '],
+    ['1','-','-','>','.','<','-','>','.','.','.','<','-','>','.','<','-','-','2'],
+    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
+    ['|','.','b','.','<','-','>','.','<','+','>','.','<','-','>','.','b','.','|'],
+    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
+    ['|','.','b','.','<','>','.','b','.','.','.','b','.','<','>','.','b','.','|'],
+    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
     ['4','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','3'],
 ]
 
@@ -250,6 +275,16 @@ map.forEach((row, i) => {
                     })
                 )
             break
+            case '.':
+                pellets.push(
+                    new Pellet({
+                        position: {
+                            x: Boundary.width * j + Boundary.width / 2,
+                            y: Boundary.height * i + Boundary.height / 2
+                        }
+                    })
+                )
+            break
         }
     })
 })
@@ -345,6 +380,9 @@ function animate() {
         pacman.position.x = pacman.radius;
     }
 
+    pellets.forEach(pellet => {
+        pellet.draw()
+    })
     boundaries.forEach((boundary) => {
         boundary.draw()
     
