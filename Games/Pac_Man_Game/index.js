@@ -502,15 +502,46 @@ ghosts.forEach((ghost) => {
                 y: ghost.velocity.y
             }},
             rectangle: boundary
-            })
-        ) {
+        })) {
             collision = true
         }
     })
 
     if (collision) {
-        ghost.velocity.x = 0
-        ghost.velocity.y = 0
+        // Stop the ghost and set a random new direction, but avoid dead ends and corners
+        ghost.velocity.x = 0;
+        ghost.velocity.y = 0;
+
+        // Possible directions to move
+        const directions = [
+            { direction: 'right', x: 1.5, y: 0 },
+            { direction: 'left', x: -1.5, y: 0 },
+            { direction: 'up', x: 0, y: -1.5 },
+            { direction: 'down', x: 0, y: 1.5 }
+        ];
+
+        // Function to check if a move is valid (not blocked by a boundary)
+        const isMoveValid = (newX, newY) => {
+            let valid = true;
+            boundaries.forEach(boundary => {
+                if (circleCollidesWithRectangle({
+                    circle: { ...ghost, velocity: { x: newX, y: newY } },
+                    rectangle: boundary
+                })) {
+                    valid = false;
+                }
+            });
+            return valid;
+        };
+
+        // Filter out invalid moves
+        const validDirections = directions.filter(({x, y}) => isMoveValid(x, y));
+
+        // If there are valid directions, pick one
+        if (validDirections.length > 0) {
+            const randomDirection = validDirections[Math.floor(Math.random() * validDirections.length)];
+            ghost.velocity = { x: randomDirection.x, y: randomDirection.y };
+        }
     }
 })
 }
