@@ -11,22 +11,24 @@ body {
     background-color: black;
 }
 
-p {
-    color: white;
+.score-container {
     text-align: center;
+    color: white;
+}
+
+p {
     font-size: 20px;
 }
 
 #livesContainer {
-    display: flex; /* Zet de levens naast elkaar */
-    gap: 10px; /* Ruimte tussen de cirkels */
-    margin-top: 10px; /* Ruimte boven de cirkels */
-    justify-content: center;
+    margin-top: 10px;
 }
 
 .life {
-    width: 20px; /* Breedte van de cirkel */
-    height: 20px; /* Hoogte van de cirkel */
-    background-color: yellow; /* Kleur van de cirkel */
-    border-radius: 50%; /* Maakt het een perfecte cirkel */
+    width: 20px;
+    height: 20px;
+    margin: 0 5px;
+    border-radius: 50%; /* Create a circle */
+    background-color: yellow; /* Yellow color for Pac-Man lives */
+    display: inline-block;
 }

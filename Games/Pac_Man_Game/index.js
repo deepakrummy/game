@@ -122,6 +122,17 @@ const keys = {
 
 let lastKey = ''
 let scoreValue = 0
+let lives = 3;
+
+function updateLives() {
+    const livesContainer = document.getElementById('livesContainer');
+    livesContainer.innerHTML = '';
+    for (let i = 0; i < lives; i++) {
+        const life = document.createElement('span');
+        life.classList.add('life');
+        livesContainer.appendChild(life);
+    }
+}
 
 // Create an array to store the boundaries
 const map = [
@@ -162,6 +173,8 @@ function initializeGame() {
     }
     scoreValue = 0
     score.innerHTML = scoreValue
+    lives = 3;
+    updateLives();
 
     map.forEach((row, i) => {
         row.forEach((symbol, j) => {
@@ -577,6 +590,26 @@ ghosts.forEach((ghost) => {
         if (validDirections.length > 0) {
             const randomDirection = validDirections[Math.floor(Math.random() * validDirections.length)];
             ghost.velocity = { x: randomDirection.x, y: randomDirection.y };
+        }
+    }
+
+    // Check for collision with Pac-Man
+    if (Math.hypot(ghost.position.x - pacman.position.x, ghost.position.y - pacman.position.y) < ghost.radius + pacman.radius) {
+        lives -= 1;
+        updateLives();
+        if (lives === 0) {
+            alert('Game Over!');
+            initializeGame();
+        } else {
+            // Reset Pac-Man position
+            pacman.position = {
+                x: Boundary.width + Boundary.width / 2,
+                y: Boundary.height + Boundary.height / 2
+            };
+            pacman.velocity = {
+                x: 0,
+                y: 0
+            };
         }
     }
 })
