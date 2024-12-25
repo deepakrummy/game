@@ -4,17 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pac-Man Game</title>
-    <style>
-        body {
-            margin: 0;
-            background-color: black;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <p style="color: white; text-align: center; font-size: 20px;">
-        <span>Score: </span><span id="score">0</span>
-    </p>
+    <div class="score-container">
+        <p>
+            <span>Score: </span><span id="score">0</span>
+        </p>
+        <div id="livesContainer">
+            <span class="life"></span>
+            <span class="life"></span>
+            <span class="life"></span>
+        </div>        
+    </div>
     <canvas></canvas>
     <script src="index.js"></script>
 </body>

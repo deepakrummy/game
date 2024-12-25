@@ -8,5 +8,25 @@ body {
     /* Remove margin to prevent unwanted spacing */
     margin: 0;
     /* Set background color to black */
-    background-color: #000;
+    background-color: black;
+}
+
+p {
+    color: white;
+    text-align: center;
+    font-size: 20px;
+}
+
+#livesContainer {
+    display: flex; /* Zet de levens naast elkaar */
+    gap: 10px; /* Ruimte tussen de cirkels */
+    margin-top: 10px; /* Ruimte boven de cirkels */
+    justify-content: center;
+}
+
+.life {
+    width: 20px; /* Breedte van de cirkel */
+    height: 20px; /* Hoogte van de cirkel */
+    background-color: yellow; /* Kleur van de cirkel */
+    border-radius: 50%; /* Maakt het een perfecte cirkel */
 }
