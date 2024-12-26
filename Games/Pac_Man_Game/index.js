@@ -18,16 +18,16 @@ document.body.style.overflow = 'hidden';
 
 // Create a class for the player
 class Boundary {
-    static width = cellSize;
-    static height = cellSize;
-    constructor({position, image}) { // The constructor takes an object with a position property so we can destructure it
+    static width = 40;
+    static height = 40;
+    constructor({position}) { // The constructor takes an object with a position property so we can destructure it
         this.position = position; // Set the position of the player
-        this.width = cellSize; 
-        this.height = cellSize;
-        this.image = image;
+        this.width = 40; 
+        this.height = 40;
     }
     draw() {
-        c.drawImage(this.image, this.position.x, this.position.y, this.width, this.height); // Draw the boundary
+        c.fillStyle = 'blue';
+        c.fillRect(this.position.x, this.position.y, this.width, this.height); // Draw the player
     }
 }
 
@@ -144,69 +144,31 @@ function updateLives() {
 
 // Create an array to store the boundaries
 const map = [
-    ['1','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','2'],
-    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
-    ['|','.','b','.','<','>','.','b','.','.','.','b','.','<','>','.','b','.','|'],
-    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
-    ['|','.','b','.','<','-','>','.','<','+','>','.','<','-','>','.','b','.','|'],
-    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
-    ['4','-','-','>','.','<','-','>','.','.','.','<','-','>','.','<','-','-','3'],
-    [' ',' ',' ',' ','.','.','.','.','.','b','.','.','.','.','.',' ',' ',' ',' '],
-    ['1','-','-','>','.','<','-','>','.','.','.','<','-','>','.','<','-','-','2'],
-    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
-    ['|','.','b','.','<','-','>','.','<','+','>','.','<','-','>','.','b','.','|'],
-    ['|','.','.','.','.','.','.','.','.','^','.','.','.','.','.','.','.','.','|'],
-    ['|','.','b','.','<','>','.','b','.','.','.','b','.','<','>','.','b','.','|'],
-    ['|','.','.','.','.','.','.','.','.','v','.','.','.','.','.','.','.','.','|'],
-    ['4','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','-','3'],
+    ['-','-','-','-','-','-','-'],
+    ['-',' ',' ',' ',' ',' ','-'],
+    ['-',' ','-',' ','-',' ','-'],
+    ['-',' ',' ',' ',' ',' ','-'],
+    ['-',' ','-',' ','-',' ','-'],
+    ['-',' ',' ',' ',' ',' ','-'],
+    ['-','-','-','-','-','-','-']
 ]
 
-function createImage(src) {
-    const image = new Image()
-    image.src = src
-    return image
-}
-
-function initializeGame() {
-    pellets.length = 0;
-    boundaries.length = 0;
-    ghosts.length = 0;
-    pacman.position = { x: Boundary.width + Boundary.width / 2, y: Boundary.height + Boundary.height / 2 };
-    pacman.velocity = { x: 0, y: 0 };
-    scoreValue = 0;
-    score.innerHTML = scoreValue;
-    lives = 3;
-    updateLives();
-
-    const symbolToBoundary = {
-        '-': './images/pipeHorizontal.png', '|': './images/pipeVertical.png', '1': './images/pipeCorner1.png',
-        '2': './images/pipeCorner2.png', '3': './images/pipeCorner3.png', '4': './images/pipeCorner4.png',
-        'b': './images/block.png', '<': './images/capLeft.png', '>': './images/capRight.png',
-        '^': './images/capBottom.png', 'v': './images/capTop.png', '0': './images/pipeConnectorBottom.png',
-        'x': './images/pipeConnectorTop.png', '+': './images/pipeCross.png'
-    };
-
-    map.forEach((row, i) => {
-        row.forEach((symbol, j) => {
-            if (symbol === '.') {
-                pellets.push(new Pellet({ position: { x: Boundary.width * j + Boundary.width / 2, y: Boundary.height * i + Boundary.height / 2 } }));
-            } else if (symbolToBoundary[symbol]) {
-                boundaries.push(new Boundary({ position: { x: Boundary.width * j, y: Boundary.height * i }, image: createImage(symbolToBoundary[symbol]) }));
-            }
-        });
-    });
-
-    const ghostConfigs = [
-        { x: 9, y: 6, velocity: 1.2, color: 'red' },
-        { x: 8, y: 7, velocity: 1.5, color: 'green' },
-        { x: 10, y: 7, velocity: 1.7, color: 'pink' }
-    ];
-
-    ghostConfigs.forEach(({ x, y, velocity, color }, index) => {
-        ghosts.push(new Ghost({ position: { x: Boundary.width * x + Boundary.width / 2, y: Boundary.height * y + Boundary.height / 2 }, velocity: { x: velocity, y: 0 }, color }));
-        setTimeout(() => { ghosts[index].startMoving = true; }, [5000, 15000, 40000][index]);
-    });
-}
+map.forEach((row, i) => {
+    row.forEach((symbol, j) => {
+        switch (symbol) {
+            case '-':
+                boundaries.push(
+                    new Boundary({
+                        position: {
+                            x: Boundary.width * j,
+                            y: Boundary.height * i
+                        }
+                    })
+                )
+            break
+        }
+    })
+})
 
 function circleCollidesWithRectangle({circle, rectangle}) {
     const padding = Boundary.width / 2 - circle.radius - 1
