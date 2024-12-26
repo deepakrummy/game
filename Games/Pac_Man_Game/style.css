@@ -50,7 +50,6 @@ body {
 .wall {
     background-color: black;
     border: 2px solid blue;
-    border-radius: 5px; /* Maakt de hoeken afgerond */
     box-sizing: border-box;
 }
 
