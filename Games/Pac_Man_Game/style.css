@@ -69,8 +69,12 @@ body {
     background-color: red;
 }
 
-.ghost.blue {
+.ghost.green {
     background-color: green;
+}
+
+.ghost.pink {
+    background-color: pink;
 }
 
 #score {

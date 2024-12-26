@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', () => {
         1,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
-        1,2,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,2,1,
+        0,2,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,2,0,
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         1,2,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,
         1,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,1,
@@ -87,11 +87,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 case 'ArrowLeft':
                     if (pacmanCurrentIndex % cols !== 0 && !grid[pacmanCurrentIndex - 1].classList.contains('wall')) {
                         newIndex -= 1;
+                    } else if (pacmanCurrentIndex % cols === 0) {
+                        newIndex += cols - 1; // Move to the right portal
                     }
                     break;
                 case 'ArrowRight':
                     if (pacmanCurrentIndex % cols < cols - 1 && !grid[pacmanCurrentIndex + 1].classList.contains('wall')) {
                         newIndex += 1;
+                    } else if (pacmanCurrentIndex % cols === cols - 1) {
+                        newIndex -= cols - 1; // Move to the left portal
                     }
                     break;
             }
@@ -133,14 +137,16 @@ document.addEventListener('DOMContentLoaded', () => {
     const activatePowerPellet = () => {
         powerPelletActive = true;
         clearTimeout(powerPelletTimer);
+        clearInterval(powerPelletSpawnTimer); // Stop spawning new power-pellets during the effect
+
+        ghosts.forEach(ghost => ghost.scare());
+
         powerPelletTimer = setTimeout(() => {
             powerPelletActive = false;
             ghosts.forEach(ghost => ghost.unscare());
             // Restart the power-pellet spawn timer
             powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
         }, 10000); // Power pellet effect lasts for 10 seconds
-
-        ghosts.forEach(ghost => ghost.scare());
     };
 
     const checkForWin = () => {
@@ -148,8 +154,7 @@ document.addEventListener('DOMContentLoaded', () => {
             gameOver = true;
             clearInterval(gameLoop);
 
-            ghost1.stop();
-            ghost2.stop();
+            ghosts.forEach(ghost => ghost.stop());
 
             setTimeout(() => {
                 alert("Congratulations! You won!");
@@ -168,8 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const endGame = () => {
         clearInterval(gameLoop);
 
-        ghost1.stop();
-        ghost2.stop();
+        ghosts.forEach(ghost => ghost.stop());
 
         setTimeout(() => {
             alert("Game over! You lost!");
@@ -288,6 +292,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
+
+                    // Handle portal logic for ghosts
+                    if (this.currentIndex % cols === 0) {
+                        this.currentIndex += cols - 1; // Move to the right portal
+                    } else if (this.currentIndex % cols === cols - 1) {
+                        this.currentIndex -= cols - 1; // Move to the left portal
+                    }
                 }
             }, this.currentSpeed); // Use the current speed
         }
@@ -298,8 +309,9 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const ghost1 = new Ghost(209, 'red');
-    const ghost2 = new Ghost(229, 'blue');
-    const ghosts = [ghost1, ghost2]; // Add all ghosts to an array
+    const ghost2 = new Ghost(229, 'green');
+    const ghost3 = new Ghost(249, 'pink');
+    const ghosts = [ghost1, ghost2, ghost3]; // Add all ghosts to an array
 
     setTimeout(() => {
         ghost1.moveGhost();
@@ -308,6 +320,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         ghost2.moveGhost();
     }, 15000); // Start moving after 15 seconds
+
+    setTimeout(() => {
+        ghost3.moveGhost();
+    }, 30000); // Start moving after 30 seconds
 
     const lifeIcons = [
         document.getElementById('life1'),
