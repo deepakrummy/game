@@ -28,6 +28,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: black; /* Set the background color of the cell */
 }
 
 .wall {
@@ -40,6 +41,14 @@ body {
     background-color: white;
     border-radius: 50%;
     margin: auto; /* Center the dot within the cell */
+}
+
+.power-pellet {
+    width: 10px;
+    height: 10px;
+    background-color: yellow;
+    border-radius: 50%;
+    margin: auto;
 }
 
 .pacman {
