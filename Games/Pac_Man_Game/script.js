@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Initialize variables
     const grid = []; // Array to hold the grid cells
-    const rows = 20; // Number of rows in the grid
+    const rows = 24; // Updated number of rows in the grid
     const cols = 20; // Number of columns in the grid
     let score = 0; // Player's score
     let lives = 3; // Player's lives
@@ -22,20 +22,20 @@ document.addEventListener('DOMContentLoaded', () => {
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         1,2,1,2,1,1,1,1,2,1,1,2,1,1,1,1,2,1,2,1,
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
-        1,2,1,1,1,1,1,2,1,1,2,1,1,2,1,1,1,1,2,1,
+        1,2,1,1,1,1,1,2,1,1,1,2,1,2,1,1,1,1,2,1,
         1,2,2,2,2,2,2,2,1,2,2,2,1,2,1,2,2,2,2,1,
         1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,
         1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,
         1,2,2,2,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
-        1,1,1,2,1,1,1,1,1,2,1,1,1,1,1,2,1,1,1,1,
+        1,2,1,2,1,1,1,1,1,2,1,1,1,1,1,2,1,1,2,1,
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         0,2,1,1,1,2,1,1,1,1,1,1,1,1,2,1,1,1,2,0,
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         1,2,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,
         1,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,1,
-        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,
+        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,2,1,
         1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,2,2,2,1,
-        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,1,1,
+        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,2,1,
         1,2,2,2,2,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1,
         1,2,1,1,1,1,1,2,1,2,1,2,1,2,1,1,1,1,2,1,
         1,2,2,2,2,2,2,2,2,2,1,2,2,2,2,2,2,2,2,1,
@@ -176,13 +176,32 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const endGame = () => {
         clearInterval(gameLoop);
-
+    
         ghosts.forEach(ghost => ghost.stop());
-
-        setTimeout(() => {
-            alert("Game over! You lost!");
-        }, 500);
+    
+        // Verwijder bestaande overlay als er al een is
+        const existingOverlay = document.getElementById('gameOverOverlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+    
+        // Maak een nieuwe overlay
+        const gameOverOverlay = document.createElement('div');
+        gameOverOverlay.id = 'gameOverOverlay';
+        gameOverOverlay.innerHTML = `
+            <div class="game-over-message">
+                <h1>${lives === 0 ? 'Game Over!' : 'Congratulations! You Won!'}</h1>
+                <button id="restartGameButton">Restart Game</button>
+            </div>
+        `;
+        document.body.appendChild(gameOverOverlay);
+    
+        // Event listener voor opnieuw starten
+        document.getElementById('restartGameButton').addEventListener('click', () => {
+            window.location.reload(); // Herlaad de pagina om een nieuw spel te starten
+        });
     };
+    
 
     gameLoop = setInterval(movePacman, 200);
 
@@ -348,12 +367,13 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const checkCollision = () => {
-        if (grid[pacmanCurrentIndex].classList.contains('ghost') && !powerPelletActive) {
-            lives--; // Decrease lives
-            updateLivesDisplay(); // Update visual display of lives
-
-            // Reset Pac-Man's position
-            grid[pacmanCurrentIndex].classList.remove('pacman', 'ghost', 'scared');
+        const ghostInSameCell = grid[pacmanCurrentIndex].querySelector('.ghost');
+        if (ghostInSameCell && !powerPelletActive) {
+            lives--; // Decrease lives by 1
+            updateLivesDisplay(); // Update the lives display
+    
+            // Check if the game is over
+            grid[pacmanCurrentIndex].classList.remove('pacman');
             pacmanCurrentIndex = 21;
             grid[pacmanCurrentIndex].classList.add('pacman');
         }
