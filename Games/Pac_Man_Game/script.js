@@ -9,10 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
     let score = 0; // Player's score
     let lives = 3; // Player's lives
     let totalPacDots = 0; // Total number of pac-dots in the game
+    let totalPowerPellets = 0; // Total number of power-pellets in the game
     let gameOver = false; // Flag to track game over state
     let gameLoop; // Variable to hold game loop interval
     let powerPelletActive = false; // Flag to track power pellet state
     let powerPelletTimer; // Timer for power pellet effect
+    let powerPelletSpawnTimer; // Timer for spawning power pellets
 
     // Level layout (0 = empty, 1 = wall, 2 = pac-dot, 3 = power-pellet)
     const layout = [
@@ -50,6 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             totalPacDots++;
         } else if (cell === 3) {
             div.classList.add('power-pellet');
+            totalPowerPellets++;
         }
 
         gameBoard.appendChild(div);
@@ -62,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (grid[pacmanCurrentIndex].classList.contains('pac-dot')) {
         grid[pacmanCurrentIndex].classList.remove('pac-dot');
         score += 10;
+        totalPacDots--;
         document.getElementById('scoreValue').textContent = score;
     }
 
@@ -101,6 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (grid[pacmanCurrentIndex].classList.contains('pac-dot')) {
                     grid[pacmanCurrentIndex].classList.remove('pac-dot');
                     score += 10;
+                    totalPacDots--;
                     document.getElementById('scoreValue').textContent = score;
                     console.log('Score:', score);
 
@@ -108,6 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (grid[pacmanCurrentIndex].classList.contains('power-pellet')) {
                     grid[pacmanCurrentIndex].classList.remove('power-pellet');
                     score += 50;
+                    totalPowerPellets--;
                     document.getElementById('scoreValue').textContent = score;
                     console.log('Score:', score);
 
@@ -130,13 +136,15 @@ document.addEventListener('DOMContentLoaded', () => {
         powerPelletTimer = setTimeout(() => {
             powerPelletActive = false;
             ghosts.forEach(ghost => ghost.unscare());
+            // Restart the power-pellet spawn timer
+            powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
         }, 10000); // Power pellet effect lasts for 10 seconds
 
         ghosts.forEach(ghost => ghost.scare());
     };
 
     const checkForWin = () => {
-        if (score === totalPacDots * 10 + 50) { // Adjusted for power-pellet score
+        if (totalPacDots === 0 && totalPowerPellets === 0) {
             gameOver = true;
             clearInterval(gameLoop);
 
@@ -353,23 +361,28 @@ document.addEventListener('DOMContentLoaded', () => {
             const randomIndex = pacDotIndices[Math.floor(Math.random() * pacDotIndices.length)];
             grid[randomIndex].classList.remove('pac-dot'); // Delete pac-dot class
             grid[randomIndex].classList.add('power-pellet'); // Add new power-pellet class
+            totalPacDots--;
+            totalPowerPellets++;
         }
     };
 
     // Turn a random pac-dot into a power-pellet every 30 seconds
-    setInterval(turnPacDotIntoPowerPellet, 30000);
+    powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
 
     // Function to make ghosts dark blue and slow
     const activatePowerPelletEffect = () => {
         powerPelletActive = true;
         clearTimeout(powerPelletTimer);
+        clearInterval(powerPelletSpawnTimer); // Stop spawning new power-pellets during the effect
 
         ghosts.forEach(ghost => ghost.scare());
 
         powerPelletTimer = setTimeout(() => {
             powerPelletActive = false;
             ghosts.forEach(ghost => ghost.unscare());
-        }, 10000); // Power-pellet effect lasts for 10 seconds
+            // Restart the power-pellet spawn timer
+            powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
+        }, 10000); // Power pellet effect lasts for 10 seconds
     };
 
     // Event listener for Pac-Man eating a power-pellet
