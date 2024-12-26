@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', () => { 
+document.addEventListener('DOMContentLoaded', () => {
     // Get the game board element
     const gameBoard = document.getElementById('gameBoard');
 
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', () => {
         1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,
         1,2,1,2,1,1,1,1,1,1,1,1,1,2,1,1,1,1,2,1,
         1,2,1,2,2,2,2,2,2,2,2,2,2,2,1,2,2,2,2,1,
-        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,2,1,
+        1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,
         1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,2,2,2,1,
         1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,2,1,1,1,1,
         1,2,2,2,2,2,2,2,1,2,2,2,1,2,2,2,2,2,2,1,
@@ -175,49 +175,49 @@ document.addEventListener('DOMContentLoaded', () => {
             this.currentIndex = startIndex;
             this.color = color;
             this.timerId = null;
-            this.originalSpeed = 200; // Originele snelheid van de geest
-            this.currentSpeed = this.originalSpeed; // Huidige snelheid
+            this.originalSpeed = 200; // Original speed
+            this.currentSpeed = this.originalSpeed; // Current speed
             this.scared = false;
             this.ghostElement = document.createElement('div');
             this.ghostElement.classList.add('ghost', this.color);
-            this.ghostElement.style.width = '20px'; // Stel de breedte in
-            this.ghostElement.style.height = '20px'; // Stel de hoogte in
-            this.ghostElement.style.borderRadius = '50%'; // Maak de ghost rond
+            this.ghostElement.style.width = '20px'; // Set the width
+            this.ghostElement.style.height = '20px'; // Set the height
+            this.ghostElement.style.borderRadius = '50%'; // Make the ghost round
             grid[this.currentIndex].appendChild(this.ghostElement);
-            this.draw(); // Teken de geest wanneer deze wordt gemaakt
+            this.draw(); // Draw the ghost on the grid
         }
-    
+
         draw() {
             grid[this.currentIndex].appendChild(this.ghostElement);
         }
-    
+
         scare() {
             this.scared = true;
-            this.currentSpeed = 400; // Langzamere snelheid
+            this.currentSpeed = 400; // Slow down the ghost
             this.updateAppearance();
             this.restartMovement();
         }
-    
+
         unscare() {
             this.scared = false;
             this.currentSpeed = this.originalSpeed;
             this.updateAppearance();
             this.restartMovement();
         }        
-    
+
         updateAppearance() {
             if (this.scared) {
-                this.ghostElement.style.backgroundColor = 'darkblue'; // Maak de ghost donkerblauw
+                this.ghostElement.style.backgroundColor = 'darkblue'; // Make the ghost dark blue
             } else {
-                this.ghostElement.style.backgroundColor = ''; // Herstel de originele kleur
+                this.ghostElement.style.backgroundColor = ''; // Reset to original color
             }
         }
-    
+
         restartMovement() {
-            clearInterval(this.timerId); // Stop de huidige beweging
-            this.moveGhost(); // Start de beweging opnieuw met de nieuwe snelheid
+            clearInterval(this.timerId); // Stop the current movement
+            this.moveGhost(); // Restart the movement with the new speed
         }
-    
+
         moveGhost() {
             const directions = [-1, +1, -cols, +cols];
             const distanceToPacman = (ghostIndex, pacmanIndex) => {
@@ -227,29 +227,29 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pacmanCol = pacmanIndex % cols;
                 return Math.abs(ghostRow - pacmanRow) + Math.abs(ghostCol - pacmanCol);
             };
-    
+
             const chooseDirection = () => {
                 const pacmanIndex = grid.findIndex(cell => cell.classList.contains('pacman'));
                 const validDirections = directions.filter(direction => {
                     const nextMove = this.currentIndex + direction;
                     return !grid[nextMove].classList.contains('wall') && !grid[nextMove].classList.contains('ghost');
                 });
-    
+
                 validDirections.sort((dir1, dir2) => {
                     const nextMove1 = this.currentIndex + dir1;
                     const nextMove2 = this.currentIndex + dir2;
                     return distanceToPacman(nextMove1, pacmanIndex) - distanceToPacman(nextMove2, pacmanIndex);
                 });
-    
+
                 return validDirections.length > 0 ? validDirections[0] : null;
             };
-    
+
             let direction = chooseDirection();
-    
+
             this.timerId = setInterval(() => {
                 if (!gameOver && direction !== null) {
                     const nextMove = this.currentIndex + direction;
-    
+
                     if (!grid[nextMove].classList.contains('wall') && !grid[nextMove].classList.contains('ghost')) {
                         grid[this.currentIndex].removeChild(this.ghostElement);
                         this.currentIndex = nextMove;
@@ -258,7 +258,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         direction = chooseDirection();
                     }
-    
+
                     if (this.currentIndex === pacmanCurrentIndex) {
                         if (powerPelletActive) {
                             // Ghost gets scared
@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         } else {
                             lives--;
                             updateLivesDisplay();
-    
+
                             if (lives === 0) {
                                 gameOver = true;
                                 endGame();
@@ -281,9 +281,9 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     }
                 }
-            }, this.currentSpeed); // Gebruik de huidige snelheid
+            }, this.currentSpeed); // Use the current speed
         }
-    
+
         stop() {
             clearInterval(this.timerId);
         }
@@ -291,16 +291,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const ghost1 = new Ghost(209, 'red');
     const ghost2 = new Ghost(229, 'blue');
-    const ghosts = [ghost1, ghost2]; // Voeg alle geesten toe aan een array
-    
+    const ghosts = [ghost1, ghost2]; // Add all ghosts to an array
+
     setTimeout(() => {
         ghost1.moveGhost();
-    }, 5000); // Start met bewegen na 5 seconden
-    
+    }, 5000); // Start moving after 5 seconds
+
     setTimeout(() => {
         ghost2.moveGhost();
-    }, 15000); // Start met bewegen na 15 seconden
-    
+    }, 15000); // Start moving after 15 seconds
+
     const lifeIcons = [
         document.getElementById('life1'),
         document.getElementById('life2'),
@@ -315,6 +315,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 lifeIcons[i].style.display = 'none'; // Hide the life icon
             }
+            console.log(`Life icon ${i + 1}: display is ${lifeIcons[i].style.display}`);
         }
     };
 
@@ -340,16 +341,20 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to randomly turn a pac-dot into a power-pellet
     const turnPacDotIntoPowerPellet = () => {
+        // Check if there is already a power-pellet on the grid
+        const existingPowerPellet = grid.some(cell => cell.classList.contains('power-pellet'));
+        if (existingPowerPellet) return; // Exit if there is already a power-pellet
+
         const pacDotIndices = grid
             .map((cell, index) => cell.classList.contains('pac-dot') ? index : -1)
             .filter(index => index !== -1);
-    
+
         if (pacDotIndices.length > 0) {
             const randomIndex = pacDotIndices[Math.floor(Math.random() * pacDotIndices.length)];
             grid[randomIndex].classList.remove('pac-dot'); // Delete pac-dot class
             grid[randomIndex].classList.add('power-pellet'); // Add new power-pellet class
         }
-    };    
+    };
 
     // Turn a random pac-dot into a power-pellet every 30 seconds
     setInterval(turnPacDotIntoPowerPellet, 30000);
@@ -364,7 +369,7 @@ document.addEventListener('DOMContentLoaded', () => {
         powerPelletTimer = setTimeout(() => {
             powerPelletActive = false;
             ghosts.forEach(ghost => ghost.unscare());
-        }, 10000); // Power-pellet effect duurt 10 seconden
+        }, 10000); // Power-pellet effect lasts for 10 seconds
     };
 
     // Event listener for Pac-Man eating a power-pellet
