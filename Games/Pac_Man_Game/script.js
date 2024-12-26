@@ -76,30 +76,37 @@ document.addEventListener('DOMContentLoaded', () => {
     const movePacman = () => {
         if (!gameOver && direction !== null) {
             let newIndex = pacmanCurrentIndex;
+            let rotation = 0;
 
             switch (direction) {
                 case 'ArrowUp':
                     if (pacmanCurrentIndex - cols >= 0 && !grid[pacmanCurrentIndex - cols].classList.contains('wall')) {
                         newIndex -= cols;
+                        rotation = -90; // Rotate up
                     }
                     break;
                 case 'ArrowDown':
                     if (pacmanCurrentIndex + cols < cols * rows && !grid[pacmanCurrentIndex + cols].classList.contains('wall')) {
                         newIndex += cols;
+                        rotation = 90; // Rotate down
                     }
                     break;
                 case 'ArrowLeft':
                     if (pacmanCurrentIndex % cols !== 0 && !grid[pacmanCurrentIndex - 1].classList.contains('wall')) {
                         newIndex -= 1;
+                        rotation = 180; // Rotate left
                     } else if (pacmanCurrentIndex % cols === 0) {
                         newIndex += cols - 1; // Move to the right portal
+                        rotation = 180; // Rotate left
                     }
                     break;
                 case 'ArrowRight':
                     if (pacmanCurrentIndex % cols < cols - 1 && !grid[pacmanCurrentIndex + 1].classList.contains('wall')) {
                         newIndex += 1;
+                        rotation = 0; // Rotate right
                     } else if (pacmanCurrentIndex % cols === cols - 1) {
                         newIndex -= cols - 1; // Move to the left portal
+                        rotation = 0; // Rotate right
                     }
                     break;
             }
@@ -108,15 +115,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 grid[pacmanCurrentIndex].classList.remove('pacman');
                 pacmanCurrentIndex = newIndex;
                 grid[pacmanCurrentIndex].classList.add('pacman');
-            
-
+                grid[pacmanCurrentIndex].style.transform = `rotate(${rotation}deg)`; // Apply rotation
+    
                 if (grid[pacmanCurrentIndex].classList.contains('pac-dot')) {
                     grid[pacmanCurrentIndex].classList.remove('pac-dot');
                     score += 10;
                     totalPacDots--;
                     document.getElementById('scoreValue').textContent = score;
                     console.log('Score:', score);
-
+    
                     checkForWin();
                 } else if (grid[pacmanCurrentIndex].classList.contains('power-pellet')) {
                     grid[pacmanCurrentIndex].classList.remove('power-pellet');
@@ -124,13 +131,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     totalPowerPellets--;
                     document.getElementById('scoreValue').textContent = score;
                     console.log('Score:', score);
-
+    
                     activatePowerPellet();
                 }
-
+    
                 checkCollision();
             }
-
+    
             if (lives === 0) {
                 gameOver = true;
                 endGame();
@@ -179,8 +186,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
             // Event listener for restart button
             document.getElementById('restartGameButton').addEventListener('click', () => {
-                window.location.reload(); // Reload the page after clicking the button
-            });
+                console.log('Restart button clicked');
+                window.location.reload(); // Reload the page
+            });            
         }
     };
     
@@ -208,8 +216,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Event listener for restart button
         document.getElementById('restartGameButton').addEventListener('click', () => {
-            window.location.reload(); // Reload the page after clicking the button
-        });
+            console.log('Restart button clicked');
+            window.location.reload(); // Reload the page
+        });        
     };
     
     let direction = null;
