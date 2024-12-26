@@ -48,8 +48,12 @@ body {
 }
 
 .wall {
-    background-color: blue;
+    background-color: black;
+    border: 2px solid blue;
+    border-radius: 5px; /* Maakt de hoeken afgerond */
+    box-sizing: border-box;
 }
+
 
 .pac-dot {
     width: 5px; /* Adjusted size */
