@@ -175,27 +175,31 @@ document.addEventListener('DOMContentLoaded', () => {
             this.currentIndex = startIndex;
             this.color = color;
             this.timerId = null;
-            this.originalSpeed = 200; // Original speed
-            this.currentSpeed = this.originalSpeed; // Current speed
+            this.originalSpeed = 200; // Originele snelheid van de geest
+            this.currentSpeed = this.originalSpeed; // Huidige snelheid
             this.scared = false;
-            this.draw(); // Draw the ghost on the grid
+            this.ghostElement = document.createElement('div');
+            this.ghostElement.classList.add('ghost', this.color);
+            this.ghostElement.style.width = '20px'; // Stel de breedte in
+            this.ghostElement.style.height = '20px'; // Stel de hoogte in
+            this.ghostElement.style.borderRadius = '50%'; // Maak de ghost rond
+            grid[this.currentIndex].appendChild(this.ghostElement);
+            this.draw(); // Teken de geest wanneer deze wordt gemaakt
         }
     
         draw() {
-            grid[this.currentIndex].classList.add('ghost', this.color);
+            grid[this.currentIndex].appendChild(this.ghostElement);
         }
     
         scare() {
             this.scared = true;
-            grid[this.currentIndex].classList.add('scared');
-            this.currentSpeed = 400; // Slow down the ghost
+            this.currentSpeed = 400; // Langzamere snelheid
             this.updateAppearance();
             this.restartMovement();
         }
     
         unscare() {
             this.scared = false;
-            grid[this.currentIndex].classList.remove('scared');
             this.currentSpeed = this.originalSpeed;
             this.updateAppearance();
             this.restartMovement();
@@ -203,9 +207,9 @@ document.addEventListener('DOMContentLoaded', () => {
     
         updateAppearance() {
             if (this.scared) {
-                grid[this.currentIndex].classList.add('scared-ghost'); // Add the class for the blue ghost
+                this.ghostElement.style.backgroundColor = 'darkblue'; // Maak de ghost donkerblauw
             } else {
-                grid[this.currentIndex].classList.remove('scared-ghost'); // De
+                this.ghostElement.style.backgroundColor = ''; // Herstel de originele kleur
             }
         }
     
@@ -247,9 +251,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     const nextMove = this.currentIndex + direction;
     
                     if (!grid[nextMove].classList.contains('wall') && !grid[nextMove].classList.contains('ghost')) {
-                        grid[this.currentIndex].classList.remove('ghost', this.color);
+                        grid[this.currentIndex].removeChild(this.ghostElement);
                         this.currentIndex = nextMove;
-                        grid[this.currentIndex].classList.add('ghost', this.color);
+                        grid[this.currentIndex].appendChild(this.ghostElement);
                         this.updateAppearance();
                     } else {
                         direction = chooseDirection();
@@ -258,9 +262,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (this.currentIndex === pacmanCurrentIndex) {
                         if (powerPelletActive) {
                             // Ghost gets scared
-                            grid[this.currentIndex].classList.remove('ghost', this.color);
+                            grid[this.currentIndex].removeChild(this.ghostElement);
                             this.currentIndex = nextMove;
-                            grid[this.currentIndex].classList.add('ghost', this.color);
+                            grid[this.currentIndex].appendChild(this.ghostElement);
                             this.updateAppearance();
                         } else {
                             lives--;
@@ -284,7 +288,6 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(this.timerId);
         }
     }
-    
 
     const ghost1 = new Ghost(209, 'red');
     const ghost2 = new Ghost(229, 'blue');
