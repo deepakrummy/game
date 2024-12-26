@@ -152,6 +152,11 @@ document.addEventListener('DOMContentLoaded', () => {
             this.currentIndex = startIndex;
             this.color = color;
             this.timerId = null;
+            this.draw(); // Draw the ghost when it is created
+        }
+
+        draw() {
+            grid[this.currentIndex].classList.add('ghost', this.color);
         }
 
         moveGhost() {
@@ -221,8 +226,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const ghost1 = new Ghost(209, 'red');
     const ghost2 = new Ghost(229, 'blue');
 
-    ghost1.moveGhost();
-    ghost2.moveGhost();
+    setTimeout(() => {
+        ghost1.moveGhost();
+    }, 5000); // Start moving ghost1 after 5 seconds
+
+    setTimeout(() => {
+        ghost2.moveGhost();
+    }, 15000); // Start moving ghost2 after 15 seconds
 
     const lifeIcons = [
         document.getElementById('life1'),
