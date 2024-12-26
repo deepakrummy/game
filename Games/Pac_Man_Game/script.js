@@ -157,15 +157,61 @@ document.addEventListener('DOMContentLoaded', () => {
         if (totalPacDots === 0 && totalPowerPellets === 0) {
             gameOver = true;
             clearInterval(gameLoop);
-
+    
             ghosts.forEach(ghost => ghost.stop());
-
-            setTimeout(() => {
-                alert("Congratulations! You won!");
-            }, 500);
+    
+            // Delete existing overlay
+            const existingOverlay = document.getElementById('gameOverOverlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+    
+            // Create new overlay
+            const gameOverOverlay = document.createElement('div');
+            gameOverOverlay.id = 'gameOverOverlay';
+            gameOverOverlay.innerHTML = `
+                <div class="game-over-message">
+                    <h1>Congratulations! You Won!</h1>
+                    <button id="restartGameButton">Restart Game</button>
+                </div>
+            `;
+            document.body.appendChild(gameOverOverlay);
+    
+            // Event listener for restart button
+            document.getElementById('restartGameButton').addEventListener('click', () => {
+                window.location.reload(); // Reload the page after clicking the button
+            });
         }
     };
-
+    
+    const endGame = () => {
+        clearInterval(gameLoop);
+    
+        ghosts.forEach(ghost => ghost.stop());
+    
+        // Delete existing overlay
+        const existingOverlay = document.getElementById('gameOverOverlay');
+        if (existingOverlay) {
+            existingOverlay.remove();
+        }
+    
+        // Create new overlay
+        const gameOverOverlay = document.createElement('div');
+        gameOverOverlay.id = 'gameOverOverlay';
+        gameOverOverlay.innerHTML = `
+            <div class="game-over-message">
+                <h1>Game Over!</h1>
+                <button id="restartGameButton">Restart Game</button>
+            </div>
+        `;
+        document.body.appendChild(gameOverOverlay);
+    
+        // Event listener for restart button
+        document.getElementById('restartGameButton').addEventListener('click', () => {
+            window.location.reload(); // Reload the page after clicking the button
+        });
+    };
+    
     let direction = null;
     document.addEventListener('keydown', (event) => {
         const key = event.key;
@@ -173,34 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
             direction = key;
         }
     });
-
-    const endGame = () => {
-        clearInterval(gameLoop);
-    
-        ghosts.forEach(ghost => ghost.stop());
-    
-        // Verwijder bestaande overlay als er al een is
-        const existingOverlay = document.getElementById('gameOverOverlay');
-        if (existingOverlay) {
-            existingOverlay.remove();
-        }
-    
-        // Maak een nieuwe overlay
-        const gameOverOverlay = document.createElement('div');
-        gameOverOverlay.id = 'gameOverOverlay';
-        gameOverOverlay.innerHTML = `
-            <div class="game-over-message">
-                <h1>${lives === 0 ? 'Game Over!' : 'Congratulations! You Won!'}</h1>
-                <button id="restartGameButton">Restart Game</button>
-            </div>
-        `;
-        document.body.appendChild(gameOverOverlay);
-    
-        // Event listener voor opnieuw starten
-        document.getElementById('restartGameButton').addEventListener('click', () => {
-            window.location.reload(); // Herlaad de pagina om een nieuw spel te starten
-        });
-    };
     
 
     gameLoop = setInterval(movePacman, 200);
