@@ -229,7 +229,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-
     gameLoop = setInterval(movePacman, 200);
 
     class Ghost {
@@ -244,42 +243,33 @@ document.addEventListener('DOMContentLoaded', () => {
             this.ghostElement.classList.add('ghost', this.color);
             this.ghostElement.style.width = '20px'; // Set the width
             this.ghostElement.style.height = '20px'; // Set the height
-            this.ghostElement.style.borderRadius = '50%'; // Make the ghost round
             grid[this.currentIndex].appendChild(this.ghostElement);
             this.draw(); // Draw the ghost on the grid
         }
-
+    
         draw() {
             grid[this.currentIndex].appendChild(this.ghostElement);
         }
-
+    
         scare() {
             this.scared = true;
             this.currentSpeed = 400; // Slow down the ghost
-            this.updateAppearance();
+            this.ghostElement.classList.add('scared'); // Add scared class
             this.restartMovement();
         }
-
+    
         unscare() {
             this.scared = false;
             this.currentSpeed = this.originalSpeed;
-            this.updateAppearance();
+            this.ghostElement.classList.remove('scared'); // Remove scared class
             this.restartMovement();
-        }        
-
-        updateAppearance() {
-            if (this.scared) {
-                this.ghostElement.style.backgroundColor = 'darkblue'; // Make the ghost dark blue
-            } else {
-                this.ghostElement.style.backgroundColor = ''; // Reset to original color
-            }
         }
-
+    
         restartMovement() {
             clearInterval(this.timerId); // Stop the current movement
             this.moveGhost(); // Restart the movement with the new speed
         }
-
+    
         moveGhost() {
             const directions = [-1, +1, -cols, +cols];
             const distanceToPacman = (ghostIndex, pacmanIndex) => {
@@ -289,49 +279,47 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pacmanCol = pacmanIndex % cols;
                 return Math.abs(ghostRow - pacmanRow) + Math.abs(ghostCol - pacmanCol);
             };
-
+    
             const chooseDirection = () => {
                 const pacmanIndex = grid.findIndex(cell => cell.classList.contains('pacman'));
                 const validDirections = directions.filter(direction => {
                     const nextMove = this.currentIndex + direction;
                     return !grid[nextMove].classList.contains('wall') && !grid[nextMove].classList.contains('ghost');
                 });
-
+    
                 validDirections.sort((dir1, dir2) => {
                     const nextMove1 = this.currentIndex + dir1;
                     const nextMove2 = this.currentIndex + dir2;
                     return distanceToPacman(nextMove1, pacmanIndex) - distanceToPacman(nextMove2, pacmanIndex);
                 });
-
+    
                 return validDirections.length > 0 ? validDirections[0] : null;
             };
-
+    
             let direction = chooseDirection();
-
+    
             this.timerId = setInterval(() => {
                 if (!gameOver && direction !== null) {
                     const nextMove = this.currentIndex + direction;
-
+    
                     if (!grid[nextMove].classList.contains('wall') && !grid[nextMove].classList.contains('ghost')) {
                         grid[this.currentIndex].removeChild(this.ghostElement);
                         this.currentIndex = nextMove;
                         grid[this.currentIndex].appendChild(this.ghostElement);
-                        this.updateAppearance();
                     } else {
                         direction = chooseDirection();
                     }
-
+    
                     if (this.currentIndex === pacmanCurrentIndex) {
                         if (powerPelletActive) {
                             // Ghost gets scared
                             grid[this.currentIndex].removeChild(this.ghostElement);
                             this.currentIndex = nextMove;
                             grid[this.currentIndex].appendChild(this.ghostElement);
-                            this.updateAppearance();
                         } else {
                             lives--;
                             updateLivesDisplay();
-
+    
                             if (lives === 0) {
                                 gameOver = true;
                                 endGame();
@@ -342,7 +330,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
-
+    
                     // Handle portal logic for ghosts
                     if (this.currentIndex % cols === 0) {
                         this.currentIndex += cols - 1; // Move to the right portal
@@ -352,25 +340,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }, this.currentSpeed); // Use the current speed
         }
-
+    
         stop() {
             clearInterval(this.timerId);
         }
     }
-
+    
     const ghost1 = new Ghost(209, 'red');
-    const ghost2 = new Ghost(229, 'green');
+    const ghost2 = new Ghost(229, 'blue');
     const ghost3 = new Ghost(249, 'pink');
     const ghosts = [ghost1, ghost2, ghost3]; // Add all ghosts to an array
-
+    
     setTimeout(() => {
         ghost1.moveGhost();
     }, 5000); // Start moving after 5 seconds
-
+    
     setTimeout(() => {
         ghost2.moveGhost();
     }, 15000); // Start moving after 15 seconds
-
+    
     setTimeout(() => {
         ghost3.moveGhost();
     }, 30000); // Start moving after 30 seconds

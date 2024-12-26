@@ -70,7 +70,7 @@ body {
 .pacman {
     width: 20px;
     height: 20px;
-    background-image: url('./gifs/pacman.gif');
+    background-image: url('./pixels/pacman.gif');
     background-size: cover;
     border-radius: 50%;
 }
@@ -78,20 +78,24 @@ body {
 .ghost {
     width: 20px;
     height: 20px;
-    border-radius: 50%;
+    background-size: cover;
     position: absolute;
 }
 
 .ghost.red {
-    background-color: red;
+    background-image: url('./pixels/ghost-red.png'); /* Vervang dit door het pad naar je rode geest GIF */
 }
 
-.ghost.green {
-    background-color: green;
+.ghost.blue {
+    background-image: url('./pixels/ghost-blue.png')/* Vervang dit door het pad naar je groene geest GIF */
 }
 
 .ghost.pink {
-    background-color: pink;
+    background-image: url('./pixels/ghost-pink.png'); /* Vervang dit door het pad naar je roze geest GIF */
+}
+
+.ghost.scared {
+    background-image: url('./pixels/ghosts-slow.gif'); /* Vervang dit door het pad naar je scared geest GIF */
 }
 
 #score {
