@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     let powerPelletTimer; // Timer for power pellet effect
     let powerPelletSpawnTimer; // Timer for spawning power pellets
 
+    const initializeGame = () => {
+
     // Level layout (0 = empty, 1 = wall, 2 = pac-dot, 3 = power-pellet)
     const layout = [
         1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,
@@ -229,7 +231,11 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     
-    gameLoop = setInterval(movePacman, 200);
+      // Start the game when the start button is clicked
+      document.getElementById('startGameButton').addEventListener('click', () => {
+        document.getElementById('startGameOverlay').style.display = 'none'; // Hide the start overlay
+        initializeGame(); // Initialize the game
+    });
 
     class Ghost {
         constructor(startIndex, color) {
@@ -446,4 +452,14 @@ document.addEventListener('DOMContentLoaded', () => {
             activatePowerPelletEffect();
         });
     });
+
+    // Start the game loop
+    gameLoop = setInterval(movePacman, 200);
+};
+
+// Start the game when the start button is clicked
+document.getElementById('startGameButton').addEventListener('click', () => {
+    document.getElementById('startGameOverlay').style.display = 'none'; // Hide the start overlay
+    initializeGame(); // Initialize the game
+});
 });
