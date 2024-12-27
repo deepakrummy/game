@@ -247,6 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     class Ghost {
         constructor(startIndex, color) {
+            this.startIndex = startIndex;
             this.currentIndex = startIndex;
             this.color = color;
             this.timerId = null;
@@ -283,6 +284,16 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(this.timerId); // Stop the current movement
             this.moveGhost(); // Restart the movement with the new speed
         }
+
+        resetPosition() {
+            this.ghostElement.classList.remove('ghost', this.color);
+            this.currentIndex = this.startIndex;
+            grid[this.currentIndex].appendChild(this.ghostElement);
+            this.ghostElement.classList.add('ghost', this.color);
+            if (this.scared) {
+                this.ghostElement.classList.add('scared'); // Retain scared class if ghost is scared
+            }
+        }    
     
         moveGhost() {
             const directions = [-1, +1, -cols, +cols];
@@ -323,17 +334,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     } else {
                         direction = chooseDirection();
                     }
-    
                     if (this.currentIndex === pacmanCurrentIndex) {
                         if (powerPelletActive) {
-                            // Ghost gets scared
-                            grid[this.currentIndex].removeChild(this.ghostElement);
-                            this.currentIndex = nextMove;
-                            grid[this.currentIndex].appendChild(this.ghostElement);
+                            // Pac-Man eats the ghost
+                            this.resetPosition(); // Reset ghost position
+                            score += 200; // Increase score for eating a ghost
+                            document.getElementById('scoreValue').textContent = score;
                         } else {
                             lives--;
                             updateLivesDisplay();
-    
+
                             if (lives === 0) {
                                 gameOver = true;
                                 endGame();
@@ -376,7 +386,7 @@ document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
         ghost3.moveGhost();
     }, 30000); // Start moving after 30 seconds
-
+    
     const lifeIcons = [
         document.getElementById('life1'),
         document.getElementById('life2'),
@@ -396,21 +406,28 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const checkCollision = () => {
-        const ghostInSameCell = grid[pacmanCurrentIndex].querySelector('.ghost');
-        if (ghostInSameCell && !powerPelletActive) {
-            lives--; // Decrease lives by 1
-            updateLivesDisplay(); // Update the lives display
+        ghosts.forEach(ghost => {
+            if (ghost.currentIndex === pacmanCurrentIndex) {
+                if (powerPelletActive) {
+                    // Pac-Man eats the ghost
+                    ghost.resetPosition(); // Reset ghost position
+                    score += 200; // Increase score for eating a ghost
+                    document.getElementById('scoreValue').textContent = score;
+                } else {
+                    lives--;
+                    updateLivesDisplay();
     
-            // Check if the game is over
-            grid[pacmanCurrentIndex].classList.remove('pacman');
-            pacmanCurrentIndex = 21;
-            grid[pacmanCurrentIndex].classList.add('pacman');
-        }
-        // Check if there are no lives left
-        if (lives === 0) {
-            gameOver = true;
-            endGame(); // Game over
-        }
+                    if (lives === 0) {
+                        gameOver = true;
+                        endGame();
+                    } else {
+                        grid[pacmanCurrentIndex].classList.remove('pacman');
+                        pacmanCurrentIndex = 21;
+                        grid[pacmanCurrentIndex].classList.add('pacman');
+                    }
+                }
+            }
+        });
     };
 
     // Check for collision on Pac-Man movement
