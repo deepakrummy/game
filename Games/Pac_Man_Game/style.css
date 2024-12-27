@@ -102,26 +102,53 @@ body {
     height: 20px;
     background-size: cover;
     position: absolute;
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center;
 }
 
 .ghost.red {
-    background-image: url('./pixels/ghost-red.png'); /* Vervang dit door het pad naar je rode geest GIF */
+    background-image: url('./pixels/ghost-red.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
 }
 
 .ghost.blue {
-    background-image: url('./pixels/ghost-blue.png')/* Vervang dit door het pad naar je groene geest GIF */
+    background-image: url('./pixels/ghost-blue.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
 }
 
 .ghost.pink {
-    background-image: url('./pixels/ghost-pink.png'); /* Vervang dit door het pad naar je roze geest GIF */
+    background-image: url('./pixels/ghost-pink.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center;
 }
 
 .ghost.scared {
-    background-image: url('./pixels/ghosts-slow.gif'); /* Vervang dit door het pad naar je scared geest GIF */
+    background-image: url('./pixels/ghosts-slow.gif');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center;
 }
 
 #score {
     margin-top: 20px;
+}
+
+.score-indicator {
+    position: absolute;
+    color: yellow;
+    font-size: 16px;
+    font-weight: bold;
+    animation: fadeOut 1s forwards;
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
 }
 
 #livesContainer {

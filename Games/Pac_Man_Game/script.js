@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const startSound = document.getElementById('startSound'); // Start screen audio element
     const eatSound = document.getElementById('eatSound'); // Eat sound element
     const powerUpSound = document.getElementById('powerUpSound'); // Power-up sound element
+    const ghostEatenSound = document.getElementById('ghostEatenSound'); // Ghost eaten sound element
 
     // Initialize variables
     const grid = []; // Array to hold the grid cells
@@ -258,9 +259,10 @@ document.addEventListener('DOMContentLoaded', () => {
             this.ghostElement.classList.add('ghost', this.color);
             this.ghostElement.style.width = '20px'; // Set the width
             this.ghostElement.style.height = '20px'; // Set the height
+            this.ghostElement.style.transform = 'rotate(0deg)'; // Prevent rotation
             grid[this.currentIndex].appendChild(this.ghostElement);
             this.draw(); // Draw the ghost on the grid
-        }
+        }        
     
         draw() {
             grid[this.currentIndex].appendChild(this.ghostElement);
@@ -293,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (this.scared) {
                 this.ghostElement.classList.add('scared'); // Retain scared class if ghost is scared
             }
-        }    
+        }
     
         moveGhost() {
             const directions = [-1, +1, -cols, +cols];
@@ -340,6 +342,9 @@ document.addEventListener('DOMContentLoaded', () => {
                             this.resetPosition(); // Reset ghost position
                             score += 200; // Increase score for eating a ghost
                             document.getElementById('scoreValue').textContent = score;
+                            showScoreIndicator('+200', pacmanCurrentIndex); // Show score indicator
+                            const ghostEatenSoundInstance = ghostEatenSound.cloneNode(); // Clone the sound element
+                            ghostEatenSoundInstance.play(); // Play the cloned sound
                         } else {
                             lives--;
                             updateLivesDisplay();
@@ -369,6 +374,19 @@ document.addEventListener('DOMContentLoaded', () => {
             clearInterval(this.timerId);
         }
     }
+    
+    // Function to show score indicator
+    const showScoreIndicator = (text, index) => {
+        const indicator = document.createElement('div');
+        indicator.classList.add('score-indicator');
+        indicator.textContent = text;
+        indicator.style.transform = 'rotate(0deg)'; // Prevent rotation
+        grid[index].appendChild(indicator);
+    
+        setTimeout(() => {
+            indicator.remove();
+        }, 1000); // Remove the indicator after 1 second
+    };
     
     const ghost1 = new Ghost(209, 'red');
     const ghost2 = new Ghost(229, 'blue');
@@ -413,6 +431,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     ghost.resetPosition(); // Reset ghost position
                     score += 200; // Increase score for eating a ghost
                     document.getElementById('scoreValue').textContent = score;
+                    showScoreIndicator('+200', pacmanCurrentIndex); // Show score indicator
                 } else {
                     lives--;
                     updateLivesDisplay();
