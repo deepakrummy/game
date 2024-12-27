@@ -1,6 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
     // Get the game board element
     const gameBoard = document.getElementById('gameBoard');
+    const startSound = document.getElementById('startSound'); // Start screen audio element
+    const eatSound = document.getElementById('eatSound'); // Eat sound element
+    const powerUpSound = document.getElementById('powerUpSound'); // Power-up sound element
 
     // Initialize variables
     const grid = []; // Array to hold the grid cells
@@ -124,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     score += 10;
                     totalPacDots--;
                     document.getElementById('scoreValue').textContent = score;
+                    eatSound.play(); // Play the eat sound
                     console.log('Score:', score);
     
                     checkForWin();
@@ -132,6 +136,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     score += 50;
                     totalPowerPellets--;
                     document.getElementById('scoreValue').textContent = score;
+                    eatSound.play(); // Play the eat sound
+                    powerUpSound.play(); // Play the power-up sound
                     console.log('Score:', score);
     
                     activatePowerPellet();
@@ -159,6 +165,8 @@ document.addEventListener('DOMContentLoaded', () => {
             ghosts.forEach(ghost => ghost.unscare());
             // Restart the power-pellet spawn timer
             powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
+            powerUpSound.pause(); // Stop the power-up sound
+            powerUpSound.currentTime = 0; // Reset the power-up sound
         }, 10000); // Power pellet effect lasts for 10 seconds
     };
 
@@ -462,4 +470,6 @@ document.getElementById('startGameButton').addEventListener('click', () => {
     document.getElementById('startGameOverlay').style.display = 'none'; // Hide the start overlay
     initializeGame(); // Initialize the game
 });
+  // Play the start sound when the start overlay is displayed
+  startSound.play();
 });
