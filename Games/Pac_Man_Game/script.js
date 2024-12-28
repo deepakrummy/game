@@ -196,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     powerUpSound.play(); // Play the power-up sound
                     console.log('Score:', score);
     
-                    activatePowerPellet();
+                    activatePowerPelletEffect();
                 }
     
                 checkCollision();
@@ -209,21 +209,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-    const activatePowerPellet = () => {
-        powerPelletActive = true;
-        clearTimeout(powerPelletTimer);
-        clearInterval(powerPelletSpawnTimer); // Stop spawning new power-pellets during the effect
-
-        ghosts.forEach(ghost => ghost.scare());
-
-        powerPelletTimer = setTimeout(() => {
-            powerPelletActive = false;
-            ghosts.forEach(ghost => ghost.unscare());
-            // Restart the power-pellet spawn timer
-            powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
-            powerUpSound.pause(); // Stop the power-up sound
-            powerUpSound.currentTime = 0; // Reset the power-up sound
-        }, 10000); // Power pellet effect lasts for 10 seconds
+    const addRestartButtonListener = () => {
+        // Event listener to the restart button
+        document.getElementById('restartGameButton').addEventListener('click', () => {
+            console.log('Restart button clicked');
+            window.location.reload(); // Reload the page to restart the game
+        });
     };
 
     const checkForWin = () => {
@@ -250,11 +241,7 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
             document.body.appendChild(gameOverOverlay);
     
-            // Event listener for restart button
-            document.getElementById('restartGameButton').addEventListener('click', () => {
-                console.log('Restart button clicked');
-                window.location.reload(); // Reload the page
-            });            
+            addRestartButtonListener();     
         }
     };
     
@@ -282,11 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         gameOverSound.play(); // Play the game over sound
     
-        // Event listener for restart button
-        document.getElementById('restartGameButton').addEventListener('click', () => {
-            console.log('Restart button clicked');
-            window.location.reload(); // Reload the page
-        });        
+        addRestartButtonListener();    
     };
     
     let direction = null;
@@ -533,19 +516,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Function to make ghosts dark blue and slow
     const activatePowerPelletEffect = () => {
-        powerPelletActive = true;
-        clearTimeout(powerPelletTimer);
-        clearInterval(powerPelletSpawnTimer); // Stop spawning new power-pellets during the effect
-
+        powerPelletActive = true; // Set the power-pellet flag to true
+        clearTimeout(powerPelletTimer); // Stop the previous power-pellet timer
+        clearInterval(powerPelletSpawnTimer); // Stop spawning power-pellets
+    
+        // Scare the ghosts
         ghosts.forEach(ghost => ghost.scare());
-
+    
+        // After 10 seconds, deactivate the power-pellet effect
         powerPelletTimer = setTimeout(() => {
             powerPelletActive = false;
             ghosts.forEach(ghost => ghost.unscare());
+            
             // Restart the power-pellet spawn timer
             powerPelletSpawnTimer = setInterval(turnPacDotIntoPowerPellet, 30000);
+    
+            // Stop the power-up sound
+            powerUpSound.pause();
+            powerUpSound.currentTime = 0;
         }, 10000); // Power pellet effect lasts for 10 seconds
     };
+    
 
     // Event listener for Pac-Man eating a power-pellet
     grid.forEach(cell => {
