@@ -5,6 +5,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const eatSound = document.getElementById('eatSound'); // Eat sound element
     const powerUpSound = document.getElementById('powerUpSound'); // Power-up sound element
     const ghostEatenSound = document.getElementById('ghostEatenSound'); // Ghost eaten sound element
+    const gameOverSound = document.getElementById('gameOverSound'); // Game over sound element
 
     // Initialize variables
     const grid = []; // Array to hold the grid cells
@@ -278,6 +279,8 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>
         `;
         document.body.appendChild(gameOverOverlay);
+
+        gameOverSound.play(); // Play the game over sound
     
         // Event listener for restart button
         document.getElementById('restartGameButton').addEventListener('click', () => {
