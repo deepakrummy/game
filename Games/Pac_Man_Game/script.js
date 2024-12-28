@@ -79,6 +79,40 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('scoreValue').textContent = score;
     }
 
+    const spawnFruit = () => {
+        const fruitTypes = ['apple', 'orange', 'cherry', 'strawberry'];
+    
+        // Choose a random fruit type
+        const randomFruit = fruitTypes[Math.floor(Math.random() * fruitTypes.length)];
+    
+        // Choose a random cell that does not contain a wall
+        const availableCells = grid.filter(cell => 
+            !cell.classList.contains('wall') && 
+            !cell.classList.contains('pacman') && 
+            !cell.classList.contains('ghost')
+        );
+    
+        if (availableCells.length > 0) {
+            const randomCell = availableCells[Math.floor(Math.random() * availableCells.length)];
+            
+            // Add fruit to the cell
+            const fruitElement = document.createElement('div');
+            fruitElement.classList.add('fruit', randomFruit);
+            randomCell.appendChild(fruitElement);
+    
+            // Remove the fruit after 10 seconds if it is not eaten
+            setTimeout(() => {
+                if (randomCell.contains(fruitElement)) {
+                    randomCell.removeChild(fruitElement);
+                }
+            }, 10000); // 10 seconds
+        }
+    };
+    
+    // Start an interval to spawn fruit every 20 seconds
+    setInterval(spawnFruit, 20000);
+    
+
     const movePacman = () => {
         if (!gameOver && direction !== null) {
             let newIndex = pacmanCurrentIndex;
@@ -116,6 +150,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                     break;
             }
+
+            if (grid[pacmanCurrentIndex].querySelector('.fruit')) {
+                const fruit = grid[pacmanCurrentIndex].querySelector('.fruit');
+                let fruitScore = 0;
+            
+                // Decide the number of points based on the fruit type
+                if (fruit.classList.contains('apple')) fruitScore = 100;
+                else if (fruit.classList.contains('orange')) fruitScore = 150;
+                else if (fruit.classList.contains('cherry')) fruitScore = 200;
+                else if (fruit.classList.contains('strawberry')) fruitScore = 250;
+            
+                score += fruitScore;
+                document.getElementById('scoreValue').textContent = score;
+            
+                // Delete fruit from grid
+                fruit.remove();
+            }            
 
             if (newIndex !== pacmanCurrentIndex) {
                 grid[pacmanCurrentIndex].classList.remove('pacman');

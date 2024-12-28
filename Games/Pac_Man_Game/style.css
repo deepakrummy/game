@@ -89,6 +89,33 @@ body {
     margin: auto;
 }
 
+/* General styling for the fruits*/
+.fruit {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
+}
+
+/* Specific styling for each fruit */
+.fruit.apple {
+    background-image: url('./pixels/fruit-apple.png');
+}
+
+.fruit.orange {
+    background-image: url('./pixels/fruit-orange.png');
+}
+
+.fruit.cherry {
+    background-image: url('./pixels/fruit-cherry.png');
+}
+
+.fruit.strawberry {
+    background-image: url('./pixels/fruit-strawberry.png');
+}
+
 .pacman {
     width: 20px;
     height: 20px;
