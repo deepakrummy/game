@@ -163,6 +163,9 @@ document.addEventListener('DOMContentLoaded', () => {
             
                 score += fruitScore;
                 document.getElementById('scoreValue').textContent = score;
+
+                // Show score indicator at the fruit position
+                showScoreIndicator(`+${fruitScore}`, pacmanCurrentIndex);
             
                 // Delete fruit from grid
                 fruit.remove();
