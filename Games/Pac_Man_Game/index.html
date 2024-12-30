@@ -5,22 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pac-Man Game</title>
-     <!-- Link to the external stylesheet -->
-     <link rel="stylesheet" href="style.css">
+    <!-- Link to the external stylesheet -->
+    <link rel="stylesheet" href="style.css">
 </head>
-    
+
 <body>
     <!-- Container for the game board -->
     <div id="gameBoard"></div>
-    
+
     <!-- Display the current score -->
     <div id="score">Score: <span id="scoreValue">0</span></div>
     <!-- Display lives -->
-     <div id="livesContainer">
+    <div id="livesContainer">
         <span>Lives: </span>
         <span id="life1" class="life"></span>
         <span id="life2" class="life"></span>
+        <span id="life3" class="life"></span>
     </div>
+
+    <!-- Start game overlay -->
+    <div id="startGameOverlay">
+        <img src="./pixels/PacMan-title.png" id="startGameButton" alt="Start Game">
+    </div>
+
+    <!-- Simple game instructions+-->
+    <div id="gameInstructions">
+        <p>Use the <span class="arrow">⬅️</span> <span class="arrow">⬆️</span> <span class="arrow">➡️</span> <span class="arrow">⬇️</span> arrow keys to move Pac-Man!</p>
+    </div>    
+
+    <!-- Audio element for start screen sound -->
+    <audio id="startSound" src="./sounds/game_start.wav"></audio>
+
+    <!-- Audio element for Pac-Man eating sound -->
+    <audio id="eatSound" src="./sounds/pacman_eat.wav"></audio>
+
+    <!-- Audio element for eating fruit sound -->
+    <audio id="eatFruitSound" src="./sounds/eat_fruit.wav"></audio>
+
+    <!-- Audio element for power-up sound -->
+    <audio id="powerUpSound" src="./sounds/power_up.wav"></audio>
+
+    <!-- Audio element for ghost eaten sound -->
+    <audio id="ghostEatenSound" src="./sounds/ghost_eaten.wav"></audio>
+
+    <!-- Audio element for game over sound -->
+    <audio id="gameOverSound" src="./sounds/game_over.wav"></audio>
+
     <!-- Link to the JavaScript file -->
     <script src="script.js"></script>
 </body>

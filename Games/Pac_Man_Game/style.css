@@ -1,114 +1,191 @@
 body {
     /* Center align the content vertically and horizontally */
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
     align-items: center;
     /* Set the height of the body to 100% of the viewport height */
     height: 100vh;
     /* Remove margin to prevent unwanted spacing */
     margin: 0;
-    /* Set background color to black */
-    background-color: #000;
-}
-
-#gameBoard {
-    /* Create a grid layout for the game board */
-    display: grid;
-    /* Define 20 columns each with a width of 30px */
-    grid-template-columns: repeat(20, 30px);
-    /* Define 20 rows each with a height of 30px */
-    grid-template-rows: repeat(20, 30px);
-    /* Set the gap between grid items */
-    gap: 2px;
-}
-
-.cell {
-    width: 30px;
-    height: 30px;
-}
-
-.wall {
-    background-color: blue;
-}
-
-/*Space for the pac dots*/
-.pac-dot {
     background-color: black;
-    /* Center align content vertically and horizontally */
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-/*Pac dots themselves*/
-.pac-dot::after {
-    /*Create circle*/
-    content: '';
+#gameBoard { /* Adjust the size of the game board as needed */
+    display: grid; /* Use CSS Grid for layout */
+    grid-template-columns: repeat(20, 20px); /* Create a grid with 20 columns */
+    grid-template-rows: repeat(24, 20px); /* Create a grid with 24 rows */
+    background-color: black;
+}
+
+#startGameOverlay { /* Overlay to display the start game button */
+    position: fixed; /* Fixed position to cover the entire viewport */
+    top: 0; /* Position from the top */
+    left: 0; /* Position from the left */
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000; /* Ensure it is on top of other elements */
+}
+
+#startGameButton { /* Start game button styling */
+    cursor: pointer; /* Change cursor to pointer on hover */
+    width: 400px;
+    height: auto;
+}
+
+.game-over-message { /* Styling for the game over message */
+    color: white;
+    text-align: center;
+}
+
+#restartGameButton { /* Restart game button styling */
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ffcc00;
+    border: none;
+    cursor: pointer; /* Change cursor to pointer on hover */
+    border-radius: 5px;
+}
+
+#restartGameButton:hover { /* Hover effect for the restart game button */
+    background-color: #ff9900;
+}
+
+.cell {  /* Styling for each cell in the game board */
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: black; /* Set the background color of the cell */
+}
+
+.wall { /* Styling for the walls */
+    background-color: black;
+    border: 2px solid blue;
+    box-sizing: border-box; /* Include border in the width and height of the cell */
+}
+
+
+.pac-dot { /* Styling for the pac-dots */
+    width: 5px;
+    height: 5px;
+    background-color: white;
+    border-radius: 50%; /* Create a circular shape */
+    margin: auto; /* Center the dot within the cell */
+}
+
+.power-pellet { /* Styling for the power pellets */
     width: 10px;
     height: 10px;
-
-    background-color: white;
-    /*Create a rounded shape*/
-    border-radius: 50%;
-}
-
-/*Pac-Man*/
-.pacman {
     background-color: yellow;
-    /*Create a round shape*/
-    border-radius: 50%;
+    border-radius: 50%; /* Create a circular shape */
+    margin: auto; /* Center the pellet within the cell */
 }
 
-/*Score display*/
-#score {
-    font-size: 24px;
-    font-weight: bold;
-    color: white;
-    background-color: black;
-    padding: 10px;
+/* General styling for the fruits*/
+.fruit {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    z-index: 10;
 }
 
-/*Score value*/
-#scoreValue {
-    color: yellow;
+/* Specific styling for each fruit */
+.fruit.apple {
+    background-image: url('./pixels/fruit-apple.png');
 }
 
+.fruit.orange {
+    background-image: url('./pixels/fruit-orange.png');
+}
 
-/*Ghosts*/
+.fruit.cherry {
+    background-image: url('./pixels/fruit-cherry.png');
+}
+
+.fruit.strawberry {
+    background-image: url('./pixels/fruit-strawberry.png');
+}
+
+.pacman { /* Styling for the pacman */
+    width: 20px;
+    height: 20px;
+    background-image: url('./pixels/pacman.gif');
+    background-size: cover; /* Ensure the image covers the entire cell */
+}
+
 .ghost {
-    /*Set background color dynamically*/
-    background-color: var(--ghost-color);
+    width: 20px;
+    height: 20px;
+    background-size: cover; /* Ensure the image covers the entire cell */
+    position: absolute; /* Position the ghost absolutely within the cell so it can move freely */
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center; /* Set the rotation origin to the center of the ghost */
 }
 
-/*Red ghost*/
-.red {
-    --ghost-color: red;
+.ghost.red {
+    background-image: url('./pixels/ghost-red.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
 }
 
-/*Blue ghost*/
-.blue {
-    --ghost-color: green;
+.ghost.blue {
+    background-image: url('./pixels/ghost-blue.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
 }
 
-/*Lives*/
-#livesContainer {
-    margin-top: 20px;
-    font-size: 20px;
+.ghost.pink {
+    background-image: url('./pixels/ghost-pink.png');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center;
+}
+
+.ghost.scared {
+    background-image: url('./pixels/ghosts-slow.gif');
+    transform: rotate(0deg); /* Prevent rotation of the score indicator */
+    transform-origin: center;
+}
+
+#score {
+    margin-top: 20px; /* Add margin to separate the score from the game board */
+}
+
+.score-indicator { /* Styling for the score indicator */
+    color: yellow;
+    font-size: 16px;
     font-weight: bold;
-    color: white;
+    animation: fadeOut 1s forwards;
 }
 
-.life {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
+@keyframes fadeOut { /* Animation to fade out the score indicator */
+    0% {
+        opacity: 1; /* Start with full opacity */
+        transform: translateY(0); /* Start at the original position */
+    }
+    100% { /* End with zero opacity and move up */
+        opacity: 0; /* End with zero opacity */
+        transform: translateY(-20px); /* Move up by 20px */
+    }
+}
+
+#livesContainer {
+    margin-top: 10px; /* Add margin to separate the lives from the score */
+}
+
+.life { /* Styling for each life indicator */
+    display: inline-block; /* Display the lives horizontally */
+    width: 20px;
+    height: 20px;
     background-color: yellow;
-    border: 2px solid white;
     border-radius: 50%;
-    margin-right: 10px;
-}
-
-/*Hide life*/
-.life.hidden {
-    display: none;
+    margin-left: 5px;
 }
