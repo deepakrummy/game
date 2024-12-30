@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const gameBoard = document.getElementById('gameBoard');
     const startSound = document.getElementById('startSound'); // Start screen audio element
     const eatSound = document.getElementById('eatSound'); // Eat sound element
+    const eatFruitSound = document.getElementById('eatFruitSound'); // Eat fruit sound element
     const powerUpSound = document.getElementById('powerUpSound'); // Power-up sound element
     const ghostEatenSound = document.getElementById('ghostEatenSound'); // Ghost eaten sound element
     const gameOverSound = document.getElementById('gameOverSound'); // Game over sound element
@@ -167,6 +168,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 // Show score indicator at the fruit position
                 showScoreIndicator(`+${fruitScore}`, pacmanCurrentIndex);
+
+                // Play the eat fruit sound
+                eatFruitSound.play();
             
                 // Delete fruit from grid
                 fruit.remove();
@@ -522,6 +526,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
         // Scare the ghosts
         ghosts.forEach(ghost => ghost.scare());
+
+        // Loop the power-up sound
+        powerUpSound.loop = true
+        powerUpSound.play();
     
         // After 10 seconds, deactivate the power-pellet effect
         powerPelletTimer = setTimeout(() => {
