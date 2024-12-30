@@ -468,6 +468,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     const checkCollision = () => {
+        if (invincible) return; // Ignore collisions if Pac-Man is invincible
+    
         ghosts.forEach(ghost => {
             if (ghost.currentIndex === pacmanCurrentIndex) {
                 if (powerPelletActive) {
@@ -484,15 +486,22 @@ document.addEventListener('DOMContentLoaded', () => {
                         gameOver = true;
                         endGame();
                     } else {
+                        invincible = true; // Set Pac-Man to be invincible
                         grid[pacmanCurrentIndex].classList.remove('pacman');
                         pacmanCurrentIndex = 21;
                         grid[pacmanCurrentIndex].classList.add('pacman');
+    
+                        // Add a brief delay before checking for collisions again
+                        clearTimeout(invincibilityTimeout); // Make sure to clear the previous timeout
+                        invincibilityTimeout = setTimeout(() => {
+                            invincible = false; // Remove invincibility after 3 seconds
+                        }, 3000);
                     }
                 }
             }
         });
     };
-
+    
     // Check for collision on Pac-Man movement
     setInterval(checkCollision, 100); // Check collision every 100ms
 
