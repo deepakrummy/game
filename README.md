@@ -932,6 +932,9 @@ This repository also provides one such platforms where contributers come over an
 | [Prime-No-Finder-Game] (https://github.com/kunjgit/GameZone/tree/main/Games/Prime-No-Finder-Game)|  
 | [Synonym-Typing-Game] (https://github.com/kunjgit/GameZone/tree/main/Games/Synonym-Typing-Game)|
 | [Color-Blink-Challenge] (https://github.com/kunjgit/GameZone/tree/main/Games/Color-Blink-Challenge)|
+
+| [MinePong](https://github.com/kunjgit/GameZone/tree/main/Games/Mine_Pong)|
+
 </center>
 <br>
 <p align="right"><a href="#top">Back to top</a></p>
