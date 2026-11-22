@@ -7,6 +7,8 @@ on:
 jobs:
   comment_and_label:
     runs-on: ubuntu-latest
+    env:
+      ISSUE_BODY: ${{ github.event.issue.body }}
 
     steps:
       - name: Checkout repository
@@ -31,7 +33,7 @@ jobs:
       - name: Add label if issue body contains "GSSoC24"
         id: check_label_gs_soc24
         run: |
-          if grep -qE "GSSoC24" <<< "${{ github.event.issue.body }}"; then
+          if grep -qE "GSSoC24" <<< "$ISSUE_BODY"; then
             echo "::set-output name=add_label_gs_soc24::true"
           else
             echo "::set-output name=add_label_gs_soc24::false"
@@ -55,7 +57,7 @@ jobs:
       - name: Add label if issue body contains "GSSoC23"
         id: check_label_gs_soc23
         run: |
-          if grep -qE "GSSoC23" <<< "${{ github.event.issue.body }}"; then
+          if grep -qE "GSSoC23" <<< "$ISSUE_BODY"; then
             echo "::set-output name=add_label_gs_soc23::true"
           else
             echo "::set-output name=add_label_gs_soc23::false"
@@ -79,7 +81,7 @@ jobs:
       - name: Add label if issue body contains "hacktoberfest"
         id: check_label_hacktoberfest
         run: |
-          if grep -qE "hacktoberfest" <<< "${{ github.event.issue.body }}"; then
+          if grep -qE "hacktoberfest" <<< "$ISSUE_BODY"; then
             echo "::set-output name=add_label_hacktoberfest::true"
           else
             echo "::set-output name=add_label_hacktoberfest::false"
@@ -103,7 +105,7 @@ jobs:
       - name: Add label if issue body contains "IWOC2024"
         id: check_label_iwoc
         run: |
-          if grep -qE "IWOC2024" <<< "${{ github.event.issue.body }}"; then
+          if grep -qE "IWOC2024" <<< "$ISSUE_BODY"; then
             echo "::set-output name=add_label_iwoc::true"
           else
             echo "::set-output name=add_label_iwoc::false"
